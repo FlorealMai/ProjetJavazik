@@ -4,10 +4,12 @@ import java.util.ArrayList;
 
 public class Morceau {
     private String titre;
-    private float duree; // en secondes
+    private float duree;
     private String artiste;
     private ArrayList<Album> albums;
+
     private int nombreEcoutes;
+    private long derniereEcoute; // timestamp
 
     public Morceau(String titre, float duree, String artiste) {
         this.titre = titre;
@@ -15,6 +17,7 @@ public class Morceau {
         this.artiste = artiste;
         this.albums = new ArrayList<>();
         this.nombreEcoutes = 0;
+        this.derniereEcoute = 0;
     }
 
     public String getTitre() {
@@ -37,14 +40,21 @@ public class Morceau {
         return nombreEcoutes;
     }
 
+    public long getDerniereEcoute() {
+        return derniereEcoute;
+    }
+
+    // 🔗 liaison avec album
     public void ajouterAlbum(Album album) {
         if (!albums.contains(album)) {
             albums.add(album);
         }
     }
 
+    // 🎧 écouter un morceau
     public void ecouter() {
         nombreEcoutes++;
+        derniereEcoute = System.currentTimeMillis();
     }
 
     @Override
