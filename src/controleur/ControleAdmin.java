@@ -20,7 +20,7 @@ public class ControleAdmin {
     /**
      * Crée un nouvel admin et l'ajoute à la liste globale.
      */
-    public void inscrireNouvelAbonne(String login, String mdp, String nom, ArrayList<Admin> liste) {
+    public void inscrireNouvelAdmin(String login, String mdp, String nom, ArrayList<Admin> liste) {
         Admin nouvelAdmin = new Admin(login, mdp, nom);
         liste.add(nouvelAdmin);
     }

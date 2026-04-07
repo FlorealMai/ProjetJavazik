@@ -2,10 +2,10 @@ package vue;
 
 import java.util.Scanner;
 
-public class MenuPrincipalView {
+public class VueMenuPrincipal {
     private Scanner scanner;
 
-    public MenuPrincipalView() {
+    public VueMenuPrincipal() {
         this.scanner = new Scanner(System.in);
     }
 
@@ -48,4 +48,8 @@ public class MenuPrincipalView {
     public void afficherErreur(String message) {
         System.err.println("[ERREUR] " + message);
     }
+
+
+
+
 }
