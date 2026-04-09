@@ -22,7 +22,7 @@ public class GestionnaireFichiers {
         sauvegarderCatalogue(catalogue);
     }
 
-    private static void sauvegarderAbonnes(ArrayList<Abonne> liste) {
+    public static void sauvegarderAbonnes(ArrayList<Abonne> liste) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_ABONNES))) {
             for (Abonne a : liste) {
                 // Format : login;motdepasse;nom
@@ -43,7 +43,7 @@ public class GestionnaireFichiers {
         }
     }
 
-    private static void sauvegarderCatalogue(ArrayList<Morceau> liste) {
+    public static void sauvegarderCatalogue(ArrayList<Morceau> liste) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_CATALOGUE))) {
             for (Morceau m : liste) {
                 // Format : titre;duree;artiste

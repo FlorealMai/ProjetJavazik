@@ -14,7 +14,9 @@ public class VueAdmin {
         System.out.println("4. Déconnexion");
         System.out.print("Choix : ");
 
-        return sc.nextInt();
+        int choix = sc.nextInt();
+        sc.nextLine(); // vide le retour à la ligne
+        return choix;
     }
 
     public int menuCatalogueAdmin() {
@@ -23,7 +25,10 @@ public class VueAdmin {
         System.out.println("2. Supprimer un morceau");
         System.out.println("3. Retour");
         System.out.print("Choix : ");
-        return sc.nextInt();
+
+        int choix = sc.nextInt();
+        sc.nextLine(); // vide le retour à la ligne
+        return choix;
     }
 
     public int menuAbonnesAdmin() {
@@ -31,18 +36,22 @@ public class VueAdmin {
         System.out.println("1. Supprimer un abonné");
         System.out.println("2. Retour");
         System.out.print("Choix : ");
-        return sc.nextInt();
+
+        int choix = sc.nextInt();
+        sc.nextLine(); // vide le retour à la ligne
+        return choix;
     }
 
     public String demanderTexte(String message) {
-        sc.nextLine();
         System.out.print(message);
         return sc.nextLine();
     }
 
     public float demanderFloat(String message) {
         System.out.print(message);
-        return sc.nextFloat();
+        float valeur = sc.nextFloat();
+        sc.nextLine(); // vide le retour à la ligne
+        return valeur;
     }
 
     public void afficherMessage(String msg) {

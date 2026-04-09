@@ -1,7 +1,11 @@
 package controleur;
 
-import modele.*;
+import modele.Admin;
+import modele.Abonne;
+import modele.Catalogue;
+import modele.Morceau;
 import vue.VueAdmin;
+import utilitaire.GestionnaireFichiers;
 
 import java.util.ArrayList;
 
@@ -13,15 +17,36 @@ public class ControleurAdmin {
         this.vueAdmin = vueAdmin;
     }
 
-    public void menuAdmin(Catalogue catalogue, ArrayList<Abonne> abonnes) {
+    public boolean loginExiste(String login, ArrayList<Admin> liste) {
+        for (Admin a : liste) {
+            if (a.getLogin().equalsIgnoreCase(login)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    public void inscrireNouvelAdmin(String login, String mdp, String nom, ArrayList<Admin> liste) {
+        Admin nouvelAdmin = new Admin(login, mdp, nom);
+        liste.add(nouvelAdmin);
+    }
+
+    public Admin authentifier(String login, String mdp, ArrayList<Admin> liste) {
+        for (Admin a : liste) {
+            if (a.getLogin().equals(login) && a.getMotDePasse().equals(mdp)) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    public void menuAdmin(Catalogue catalogue, ArrayList<Abonne> abonnes) {
         boolean quitter = false;
 
         while (!quitter) {
             int choix = vueAdmin.afficherMenuAdmin();
 
             switch (choix) {
-
                 case 1:
                     gererCatalogue(catalogue);
                     break;
@@ -39,7 +64,8 @@ public class ControleurAdmin {
                     break;
 
                 default:
-                    vueAdmin.afficherMessage("Choix invalide");
+                    vueAdmin.afficherMessage("Choix invalide.");
+                    break;
             }
         }
     }
@@ -51,39 +77,55 @@ public class ControleurAdmin {
             int choix = vueAdmin.menuCatalogueAdmin();
 
             switch (choix) {
-
                 case 1:
-                    String titre = vueAdmin.demanderTexte("Titre : ");
-                    String artiste = vueAdmin.demanderTexte("Artiste : ");
-                    float duree = vueAdmin.demanderFloat("Durée : ");
-
-                    catalogue.ajouterMorceau(new Morceau(titre, duree, artiste));
-                    vueAdmin.afficherMessage("Morceau ajouté !");
+                    ajouterMorceau(catalogue);
                     break;
 
                 case 2:
-                    String titreSuppr = vueAdmin.demanderTexte("Titre à supprimer : ");
-
-                    Morceau aSuppr = null;
-                    for (Morceau m : catalogue.getMorceaux()) {
-                        if (m.getTitre().equalsIgnoreCase(titreSuppr)) {
-                            aSuppr = m;
-                            break;
-                        }
-                    }
-
-                    if (aSuppr != null) {
-                        catalogue.getMorceaux().remove(aSuppr);
-                        vueAdmin.afficherMessage("Supprimé !");
-                    } else {
-                        vueAdmin.afficherMessage("Introuvable");
-                    }
+                    supprimerMorceau(catalogue);
                     break;
 
                 case 3:
                     retour = true;
                     break;
+
+                default:
+                    vueAdmin.afficherMessage("Choix invalide.");
+                    break;
             }
+        }
+    }
+
+    private void ajouterMorceau(Catalogue catalogue) {
+        String titre = vueAdmin.demanderTexte("Titre : ");
+        String artiste = vueAdmin.demanderTexte("Artiste : ");
+        float duree = vueAdmin.demanderFloat("Durée : ");
+
+        Morceau nouveau = new Morceau(titre, duree, artiste);
+        catalogue.ajouterMorceau(nouveau);
+
+        utilitaire.GestionnaireFichiers.sauvegarderCatalogue(catalogue.getMorceaux());
+
+        vueAdmin.afficherMessage("Morceau ajouté avec succès !");
+    }
+
+    private void supprimerMorceau(Catalogue catalogue) {
+        String titreSuppr = vueAdmin.demanderTexte("Titre à supprimer : ");
+
+        Morceau aSuppr = null;
+        for (Morceau m : catalogue.getMorceaux()) {
+            if (m.getTitre().equalsIgnoreCase(titreSuppr)) {
+                aSuppr = m;
+                break;
+            }
+        }
+
+        if (aSuppr != null) {
+            catalogue.getMorceaux().remove(aSuppr);
+            utilitaire.GestionnaireFichiers.sauvegarderCatalogue(catalogue.getMorceaux());
+            vueAdmin.afficherMessage("Morceau supprimé avec succès !");
+        } else {
+            vueAdmin.afficherMessage("Morceau introuvable.");
         }
     }
 
@@ -94,7 +136,6 @@ public class ControleurAdmin {
             int choix = vueAdmin.menuAbonnesAdmin();
 
             switch (choix) {
-
                 case 1:
                     String login = vueAdmin.demanderTexte("Login à supprimer : ");
 
@@ -110,31 +151,28 @@ public class ControleurAdmin {
                         abonnes.remove(aSuppr);
                         vueAdmin.afficherMessage("Compte supprimé !");
                     } else {
-                        vueAdmin.afficherMessage("Utilisateur introuvable");
+                        vueAdmin.afficherMessage("Utilisateur introuvable.");
                     }
                     break;
 
                 case 2:
                     retour = true;
                     break;
+
+                default:
+                    vueAdmin.afficherMessage("Choix invalide.");
+                    break;
             }
         }
     }
-    public Admin authentifier(String login, String mdp, ArrayList<Admin> liste) {
-        for (Admin a : liste) {
-            if (a.getLogin().equals(login) && a.getMotDePasse().equals(mdp)) {
-                return a;
-            }
-        }
-        return null;
-    }
+
     private void afficherStats(Catalogue catalogue, ArrayList<Abonne> abonnes) {
         int nbMorceaux = catalogue.getMorceaux().size();
         int nbUsers = abonnes.size();
 
         int totalEcoutes = 0;
         for (Morceau m : catalogue.getMorceaux()) {
-            totalEcoutes += m.getNbEcoutes(); // suppose que tu as ça
+            totalEcoutes += m.getNbEcoutes();
         }
 
         vueAdmin.afficherMessage("\n--- STATS ---");
