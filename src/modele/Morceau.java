@@ -8,6 +8,7 @@ public class Morceau {
     private String artiste;
     private ArrayList<Album> albums;
 
+
     private int nombreEcoutes;
     private long derniereEcoute; // timestamp
 
@@ -55,6 +56,9 @@ public class Morceau {
     public void ecouter() {
         nombreEcoutes++;
         derniereEcoute = System.currentTimeMillis();
+    }
+    public int getNbEcoutes() {
+        return nombreEcoutes;
     }
 
     @Override

@@ -1,33 +1,87 @@
 package controleur;
 
-import modele.Catalogue;
-import modele.Morceau;
-import modele.Album;
-import modele.Artiste;
-import modele.Utilisateur;
+import modele.*;
+import vue.VueCatalog;
+import vue.VueMenuPrincipal;
+
 import java.util.ArrayList;
 
 public class ControleurCatalogue {
 
-    public ControleurCatalogue() {
+    private VueCatalog vueCatalog;
+    private VueMenuPrincipal menuPrincipal;
+
+    public ControleurCatalogue(VueCatalog vueCatalog, VueMenuPrincipal menuPrincipal) {
+        this.vueCatalog = vueCatalog;
+        this.menuPrincipal = menuPrincipal;
     }
 
-    /**
-     * Recherche un morceau par son titre dans le catalogue.
-     */
+    public void gererCatalogue(Catalogue catalogue, Utilisateur utilisateurActuel) {
+        boolean retour = false;
+
+        while (!retour) {
+            int choix = vueCatalog.afficherMenuCatalogue();
+
+            switch (choix) {
+
+                case 1: // Recherche titre
+                    String recherche = vueCatalog.demanderRecherche();
+                    ArrayList<Morceau> resultats = rechercherMorceau(recherche, catalogue);
+
+                    Morceau selection = vueCatalog.selectionnerMorceau(resultats);
+
+                    if (selection != null) {
+                        ecouter(selection, utilisateurActuel);
+                    }
+                    break;
+
+                case 2: // Recherche artiste
+                    String nomArtiste = vueCatalog.demanderRecherche();
+                    Artiste artiste = rechercherArtiste(nomArtiste, catalogue);
+
+                    if (artiste != null) {
+                        ArrayList<Morceau> morceaux = artiste.getMorceaux();
+                        Morceau choixArtiste = vueCatalog.selectionnerMorceau(morceaux);
+
+                        if (choixArtiste != null) {
+                            ecouter(choixArtiste, utilisateurActuel);
+                        }
+                    } else {
+                        menuPrincipal.afficherErreur("Artiste introuvable.");
+                    }
+                    break;
+
+                case 3: // Tout afficher
+                    ArrayList<Morceau> tous = catalogue.getMorceaux();
+                    Morceau choixTout = vueCatalog.selectionnerMorceau(tous);
+
+                    if (choixTout != null) {
+                        ecouter(choixTout, utilisateurActuel);
+                    }
+                    break;
+
+                case 4:
+                    retour = true;
+                    break;
+
+                default:
+                    menuPrincipal.afficherErreur("Choix invalide.");
+            }
+        }
+    }
+
     public ArrayList<Morceau> rechercherMorceau(String titre, Catalogue catalogue) {
         ArrayList<Morceau> resultats = new ArrayList<>();
+
         for (Morceau m : catalogue.getMorceaux()) {
             if (m.getTitre().toLowerCase().contains(titre.toLowerCase())) {
                 resultats.add(m);
             }
         }
+
         return resultats;
     }
 
-    /**
-     * Recherche un artiste par son nom.
-     */
     public Artiste rechercherArtiste(String nom, Catalogue catalogue) {
         for (Artiste a : catalogue.getArtistes()) {
             if (a.getNom().equalsIgnoreCase(nom)) {
@@ -37,33 +91,21 @@ public class ControleurCatalogue {
         return null;
     }
 
-    /**
-     * Gère la simulation d'écoute d'un morceau.
-     * Vérifie les droits de l'utilisateur avant de lancer la pause.
-     */
-    public boolean lireMorceau(Morceau m, Utilisateur u) {
+    private void ecouter(Morceau m, Utilisateur u) {
         if (u.peutEcouter()) {
-            System.out.println("\n[LECTURE] " + m.getTitre() + " par " + m.getArtiste());
+            System.out.println("\n[LECTURE] " + m.getTitre() + " - " + m.getArtiste());
 
-            // Simulation par un temps de pause comme demandé
             try {
-                Thread.sleep(2000); // Pause de 2 secondes
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
 
-            u.ecouter(); // Incrémente le compteur ou ajoute à l'historique
-            m.ecouter(); // Met à jour les stats du morceau
-            return true;
-        } else {
-            return false; // Limite atteinte pour les visiteurs
-        }
-    }
+            u.ecouter();
+            m.ecouter();
 
-    /**
-     * Retourne tous les morceaux d'un album spécifique[cite: 98].
-     */
-    public ArrayList<Morceau> obtenirMorceauxAlbum(Album album) {
-        return album.getMorceaux();
+        } else {
+            menuPrincipal.afficherErreur("Limite de 5 écoutes atteinte.");
+        }
     }
 }
