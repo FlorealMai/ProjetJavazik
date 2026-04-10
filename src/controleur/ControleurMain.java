@@ -5,12 +5,11 @@ import modele.Abonne;
 import modele.Morceau;
 import modele.Utilisateur;
 import modele.Admin;
-import vue.VueMenuPrincipal;
-import vue.VueCatalog;
-import vue.VueAdmin;
+import vue.IVueMenuPrincipal;
+import vue.IVueCatalog;
+import vue.IVueAdmin;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class ControleurMain {
     // Données du programme
@@ -26,11 +25,15 @@ public class ControleurMain {
     private ControleUtilisateur controleUtilisateur;
     private ControleurAdmin controleurAdmin;
     private ControleurCatalogue controleurCatalogue;
-    private VueMenuPrincipal menuPrincipal;
-    private VueCatalog vueCatalog;
-    private VueAdmin vueAdmin;
+    private IVueMenuPrincipal menuPrincipal;
+    private IVueCatalog vueCatalog;
+    private IVueAdmin vueAdmin;
 
-    public ControleurMain() {
+    public ControleurMain(IVueMenuPrincipal menuPrincipal, IVueCatalog vueCatalog, IVueAdmin vueAdmin) {
+        this.menuPrincipal = menuPrincipal;
+        this.vueCatalog = vueCatalog;
+        this.vueAdmin = vueAdmin;
+
         this.catalogue = new Catalogue();
 
         // Chargement catalogue
@@ -47,8 +50,12 @@ public class ControleurMain {
         this.listeAbonnes = utilitaire.GestionnaireFichiers.chargerAbonnes();
         this.listeAdmin = utilitaire.GestionnaireFichiers.chargerAdmins();
 
-        if (listeAbonnes == null) listeAbonnes = new ArrayList<>();
-        if (listeAdmin == null) listeAdmin = new ArrayList<>();
+        if (listeAbonnes == null) {
+            listeAbonnes = new ArrayList<>();
+        }
+        if (listeAdmin == null) {
+            listeAdmin = new ArrayList<>();
+        }
 
         // Données test si vide
         if (catalogue.getMorceaux().isEmpty()) {
@@ -59,13 +66,8 @@ public class ControleurMain {
         this.abonneConnecte = null;
         this.adminConnecte = null;
 
-        // ⚠️ IMPORTANT : créer les vues AVANT
-        this.menuPrincipal = new VueMenuPrincipal();
-        this.vueCatalog = new VueCatalog();
-
-        // puis les contrôleurs
+        // Contrôleurs
         this.controleUtilisateur = new ControleUtilisateur();
-        this.vueAdmin = new VueAdmin();
         this.controleurAdmin = new ControleurAdmin(vueAdmin);
         this.controleurCatalogue = new ControleurCatalogue(vueCatalog, menuPrincipal);
     }
@@ -90,6 +92,7 @@ public class ControleurMain {
                     seConnecterAbonne();
                     if (abonneConnecte != null) {
                         menuPrincipal.afficherMessage("Connexion client réussie !");
+                        gererCatalogue();
                         deconnexion();
                     }
                     break;
@@ -115,6 +118,7 @@ public class ControleurMain {
 
                 default:
                     menuPrincipal.afficherErreur("Choix invalide.");
+                    break;
             }
         }
     }
@@ -149,10 +153,7 @@ public class ControleurMain {
 
     private void creerCompte() {
         String[] ids = menuPrincipal.demanderIdentifiants();
-
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Nom complet : ");
-        String nom = sc.nextLine();
+        String nom = vueAdmin.demanderTexte("Nom complet : ");
 
         if (controleUtilisateur.loginExiste(ids[0], listeAbonnes)) {
             menuPrincipal.afficherErreur("Login déjà utilisé.");
@@ -179,11 +180,13 @@ public class ControleurMain {
         ajouterSiInexistant("Baby Doll", 2.15f, "Ari Abdul");
         ajouterSiInexistant("Sigma Boy", 1.45f, "Skibidi Toilet");
 
-        if (listeAbonnes.isEmpty())
+        if (listeAbonnes.isEmpty()) {
             listeAbonnes.add(new Abonne("user", "123", "Utilisateur Test"));
+        }
 
-        if (listeAdmin.isEmpty())
+        if (listeAdmin.isEmpty()) {
             listeAdmin.add(new Admin("admin", "345", "Admin Test"));
+        }
     }
 
     private void ajouterSiInexistant(String titre, float duree, String artiste) {

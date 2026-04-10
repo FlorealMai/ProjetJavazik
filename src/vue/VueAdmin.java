@@ -2,7 +2,7 @@ package vue;
 
 import java.util.Scanner;
 
-public class VueAdmin {
+public class VueAdmin implements IVueAdmin{
 
     private Scanner sc = new Scanner(System.in);
 

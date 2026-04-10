@@ -2,7 +2,7 @@ package vue;
 
 import java.util.Scanner;
 
-public class VueMenuPrincipal {
+public class VueMenuPrincipal implements IVueMenuPrincipal {
     private Scanner scanner;
 
     public VueMenuPrincipal() {
@@ -33,7 +33,7 @@ public class VueMenuPrincipal {
      * Formulaire générique pour la connexion ou l'inscription.
      */
     public String[] demanderIdentifiants() {
-        scanner.nextLine(); // Nettoyage du tampon
+        scanner.nextLine();
         System.out.print("identifiant : ");
         String login = scanner.nextLine();
         System.out.print("Mot de passe : ");

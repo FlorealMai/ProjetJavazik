@@ -4,16 +4,16 @@ import modele.Admin;
 import modele.Abonne;
 import modele.Catalogue;
 import modele.Morceau;
-import vue.VueAdmin;
+import vue.IVueAdmin;
 import utilitaire.GestionnaireFichiers;
 
 import java.util.ArrayList;
 
 public class ControleurAdmin {
 
-    private VueAdmin vueAdmin;
+    private IVueAdmin vueAdmin;
 
-    public ControleurAdmin(VueAdmin vueAdmin) {
+    public ControleurAdmin(IVueAdmin vueAdmin) {
         this.vueAdmin = vueAdmin;
     }
 

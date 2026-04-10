@@ -1,17 +1,17 @@
 package controleur;
 
 import modele.*;
-import vue.VueCatalog;
-import vue.VueMenuPrincipal;
+import vue.IVueCatalog;
+import vue.IVueMenuPrincipal;
 
 import java.util.ArrayList;
 
 public class ControleurCatalogue {
 
-    private VueCatalog vueCatalog;
-    private VueMenuPrincipal menuPrincipal;
+    private IVueCatalog vueCatalog;
+    private IVueMenuPrincipal menuPrincipal;
 
-    public ControleurCatalogue(VueCatalog vueCatalog, VueMenuPrincipal menuPrincipal) {
+    public ControleurCatalogue(IVueCatalog vueCatalog, IVueMenuPrincipal menuPrincipal) {
         this.vueCatalog = vueCatalog;
         this.menuPrincipal = menuPrincipal;
     }
