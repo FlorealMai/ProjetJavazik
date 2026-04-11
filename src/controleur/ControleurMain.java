@@ -67,13 +67,19 @@ public class ControleurMain {
             System.out.println("[INFO] Données de test utilisées.");
         }
 
+        utilitaire.GestionnaireFichiers.chargerPlaylists(listeAbonnes, catalogue.getMorceaux());
+
         this.abonneConnecte = null;
         this.adminConnecte = null;
 
         this.controleUtilisateur = new ControleUtilisateur();
         this.controleurAdmin = new ControleurAdmin(vueAdmin);
         this.controleurCatalogue = new ControleurCatalogue(vueCatalog, menuPrincipal);
-        this.controleurAbonne = new ControleurAbonne(vueAbonne, controleurCatalogue);
+        this.controleurAbonne = new ControleurAbonne(
+                vueAbonne,
+                controleurCatalogue,
+                listeAbonnes
+        );
     }
 
     private void controleur() {

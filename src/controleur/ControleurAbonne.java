@@ -5,17 +5,22 @@ import modele.Catalogue;
 import modele.Morceau;
 import modele.Playlist;
 import vue.IVueAbonne;
-
+import utilitaire.GestionnaireFichiers;
 import java.util.ArrayList;
 
 public class ControleurAbonne {
 
     private IVueAbonne vueAbonne;
     private ControleurCatalogue controleurCatalogue;
+    private ArrayList<Abonne> listeAbonnes;
 
-    public ControleurAbonne(IVueAbonne vueAbonne, ControleurCatalogue controleurCatalogue) {
+    public ControleurAbonne(IVueAbonne vueAbonne,
+                            ControleurCatalogue controleurCatalogue,
+                            ArrayList<Abonne> listeAbonnes) {
+
         this.vueAbonne = vueAbonne;
         this.controleurCatalogue = controleurCatalogue;
+        this.listeAbonnes = listeAbonnes;
     }
 
     public void menuAbonne(Abonne abonne, Catalogue catalogue) {
@@ -96,8 +101,9 @@ public class ControleurAbonne {
 
         Playlist nouvellePlaylist = new Playlist(nomPlaylist.trim());
         abonne.ajouterPlaylist(nouvellePlaylist);
-
+        utilitaire.GestionnaireFichiers.sauvegarderPlaylists(listeAbonnes);
         vueAbonne.afficherMessage("Playlist créée avec succès.");
+
     }
 
     private void afficherPlaylists(Abonne abonne) {
@@ -180,6 +186,9 @@ public class ControleurAbonne {
         Morceau morceauChoisi = morceauxCatalogue.get(choixMorceau - 1);
         playlistChoisie.ajouterMorceau(morceauChoisi);
 
+        utilitaire.GestionnaireFichiers.sauvegarderPlaylists(listeAbonnes);
         vueAbonne.afficherMessage("Morceau ajouté à la playlist.");
+
+
     }
 }

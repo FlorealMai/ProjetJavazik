@@ -5,13 +5,14 @@ import modele.Admin;
 import modele.Morceau;
 import java.io.*;
 import java.util.ArrayList;
+import modele.Playlist;
 
 public class GestionnaireFichiers {
     // Noms des fichiers de stockage
     private static final String FILE_ABONNES = "abonnes.txt";
     private static final String FILE_ADMINS = "admins.txt";
     private static final String FILE_CATALOGUE = "catalogue.txt";
-
+    private static final String FILE_PLAYLISTS = "playlists.txt";
     // ==========================================================
     // MÉTHODES DE SAUVEGARDE (Écriture)
     // ==========================================================
@@ -20,6 +21,7 @@ public class GestionnaireFichiers {
         sauvegarderAbonnes(abonnes);
         sauvegarderAdmins(admins);
         sauvegarderCatalogue(catalogue);
+        sauvegarderPlaylists(abonnes);
     }
 
     public static void sauvegarderAbonnes(ArrayList<Abonne> liste) {
@@ -115,4 +117,84 @@ public class GestionnaireFichiers {
         }
         return liste;
     }
+//-----------------------------------------------
+//          SAUVEGARDE PLAY LISTS
+//-----------------------------------------------
+    public static void sauvegarderPlaylists(ArrayList<Abonne> abonnes) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_PLAYLISTS))) {
+            for (Abonne a : abonnes) {
+                for (Playlist p : a.getPlaylists()) {
+                    StringBuilder ligne = new StringBuilder();
+                    ligne.append(a.getLogin()).append(";")
+                            .append(p.getNom()).append(";");
+
+                    ArrayList<Morceau> morceaux = p.getMorceaux();
+                    for (int i = 0; i < morceaux.size(); i++) {
+                        ligne.append(morceaux.get(i).getTitre());
+                        if (i < morceaux.size() - 1) {
+                            ligne.append("|");
+                        }
+                    }
+
+                    writer.println(ligne);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Erreur sauvegarde playlists : " + e.getMessage());
+        }
+    }
+    public static void chargerPlaylists(ArrayList<Abonne> abonnes, ArrayList<Morceau> catalogue) {
+        File file = new File(FILE_PLAYLISTS);
+        if (!file.exists()) return;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String ligne;
+
+            while ((ligne = reader.readLine()) != null) {
+                String[] d = ligne.split(";");
+                if (d.length >= 2) {
+                    String login = d[0];
+                    String nomPlaylist = d[1];
+
+                    Playlist playlist = new Playlist(nomPlaylist);
+
+                    if (d.length == 3 && !d[2].isEmpty()) {
+                        String[] titres = d[2].split("\\|");
+
+                        for (String titre : titres) {
+                            Morceau morceauTrouve = trouverMorceauParTitre(titre, catalogue);
+                            if (morceauTrouve != null) {
+                                playlist.ajouterMorceau(morceauTrouve);
+                            }
+                        }
+                    }
+
+                    Abonne abonneTrouve = trouverAbonneParLogin(login, abonnes);
+                    if (abonneTrouve != null) {
+                        abonneTrouve.ajouterPlaylist(playlist);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Erreur chargement playlists : " + e.getMessage());
+        }
+    }
+    private static Abonne trouverAbonneParLogin(String login, ArrayList<Abonne> abonnes) {
+        for (Abonne a : abonnes) {
+            if (a.getLogin().equalsIgnoreCase(login)) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    private static Morceau trouverMorceauParTitre(String titre, ArrayList<Morceau> catalogue) {
+        for (Morceau m : catalogue) {
+            if (m.getTitre().equalsIgnoreCase(titre)) {
+                return m;
+            }
+        }
+        return null;
+    }
+
 }
