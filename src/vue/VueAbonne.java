@@ -3,6 +3,7 @@ package vue;
 import java.util.Scanner;
 
 public class VueAbonne implements IVueAbonne {
+
     private Scanner scanner;
 
     public VueAbonne() {
@@ -15,7 +16,10 @@ public class VueAbonne implements IVueAbonne {
         System.out.println("1. Accéder au catalogue");
         System.out.println("2. Voir l'historique");
         System.out.println("3. Voir mes informations");
-        System.out.println("4. Déconnexion");
+        System.out.println("4. Créer une playlist");
+        System.out.println("5. Voir mes playlists");
+        System.out.println("6. Ajouter un morceau à une playlist");
+        System.out.println("7. Déconnexion");
         System.out.print("Votre choix : ");
 
         while (!scanner.hasNextInt()) {
@@ -39,6 +43,32 @@ public class VueAbonne implements IVueAbonne {
     public void afficherHistorique(String historiqueTexte) {
         System.out.println("\n--- HISTORIQUE ---");
         System.out.println(historiqueTexte);
+    }
+
+    @Override
+    public void afficherPlaylists(String playlistsTexte) {
+        System.out.println("\n--- PLAYLISTS ---");
+        System.out.println(playlistsTexte);
+    }
+
+    @Override
+    public String demanderTexte(String message) {
+        System.out.print(message);
+        return scanner.nextLine();
+    }
+
+    @Override
+    public int demanderChoix(String message) {
+        System.out.println(message);
+
+        while (!scanner.hasNextInt()) {
+            scanner.next();
+            System.out.print("Entrez un nombre valide : ");
+        }
+
+        int choix = scanner.nextInt();
+        scanner.nextLine();
+        return choix;
     }
 
     @Override

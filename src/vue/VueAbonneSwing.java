@@ -23,7 +23,10 @@ public class VueAbonneSwing implements IVueAbonne {
                         + "1. Accéder au catalogue\n"
                         + "2. Voir l'historique\n"
                         + "3. Voir mes informations\n"
-                        + "4. Déconnexion\n\n"
+                        + "4. Créer une playlist\n"
+                        + "5. Voir mes playlists\n"
+                        + "6. Ajouter un morceau à une playlist\n"
+                        + "7. Déconnexion\n\n"
                         + "Votre choix :",
                 "Menu abonné",
                 JOptionPane.QUESTION_MESSAGE
@@ -54,6 +57,33 @@ public class VueAbonneSwing implements IVueAbonne {
                 "Historique",
                 JOptionPane.INFORMATION_MESSAGE
         );
+    }
+
+    @Override
+    public void afficherPlaylists(String playlistsTexte) {
+        JOptionPane.showMessageDialog(
+                frame,
+                playlistsTexte,
+                "Playlists",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+
+    @Override
+    public String demanderTexte(String message) {
+        String saisie = JOptionPane.showInputDialog(frame, message);
+        return saisie == null ? "" : saisie;
+    }
+
+    @Override
+    public int demanderChoix(String message) {
+        String saisie = JOptionPane.showInputDialog(frame, message);
+
+        try {
+            return Integer.parseInt(saisie);
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     @Override

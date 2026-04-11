@@ -17,7 +17,7 @@ public class VueMenuPrincipalSwing implements IVueMenuPrincipal {
 
     @Override
     public int afficherMenuInitial() {
-        System.out.println("Je suis bien entré dans VueMenuPrincipalSwing.afficherMenuInitial()");
+
 
         String saisie = JOptionPane.showInputDialog(
                 frame,

@@ -20,9 +20,10 @@ public class Playlist {
     }
 
     public void ajouterMorceau(Morceau morceau) {
-        morceaux.add(morceau);
+        if (!morceaux.contains(morceau)) {
+            morceaux.add(morceau);
+        }
     }
-
     public void retirerMorceau(Morceau morceau) {
         morceaux.remove(morceau);
     }
