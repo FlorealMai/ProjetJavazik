@@ -3,11 +3,11 @@ package vue;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-public class VueMenuPrincipalSwing implements IVueMenuPrincipal {
+public class VueAbonneSwing implements IVueAbonne {
 
     private final JFrame frame;
 
-    public VueMenuPrincipalSwing() {
+    public VueAbonneSwing() {
         frame = new JFrame();
         frame.setAlwaysOnTop(true);
         frame.setUndecorated(true);
@@ -16,18 +16,16 @@ public class VueMenuPrincipalSwing implements IVueMenuPrincipal {
     }
 
     @Override
-    public int afficherMenuInitial() {
-        System.out.println("Je suis bien entré dans VueMenuPrincipalSwing.afficherMenuInitial()");
-
+    public int afficherMenuAbonne() {
         String saisie = JOptionPane.showInputDialog(
                 frame,
-                "1. Connexion administrateur\n"
-                        + "2. Connexion client\n"
-                        + "3. Créer un compte\n"
-                        + "4. Continuer en visiteur\n"
-                        + "5. Quitter\n\n"
+                "===== MENU ABONNÉ =====\n"
+                        + "1. Accéder au catalogue\n"
+                        + "2. Voir l'historique\n"
+                        + "3. Voir mes informations\n"
+                        + "4. Déconnexion\n\n"
                         + "Votre choix :",
-                "JAVAZIC - Menu principal",
+                "Menu abonné",
                 JOptionPane.QUESTION_MESSAGE
         );
 
@@ -39,14 +37,23 @@ public class VueMenuPrincipalSwing implements IVueMenuPrincipal {
     }
 
     @Override
-    public String[] demanderIdentifiants() {
-        String login = JOptionPane.showInputDialog(frame, "Login :");
-        String mdp = JOptionPane.showInputDialog(frame, "Mot de passe :");
+    public void afficherInfosAbonne(String login, String nom) {
+        JOptionPane.showMessageDialog(
+                frame,
+                "Login : " + login + "\nNom : " + nom,
+                "Mes informations",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+    }
 
-        if (login == null) login = "";
-        if (mdp == null) mdp = "";
-
-        return new String[]{login, mdp};
+    @Override
+    public void afficherHistorique(String historiqueTexte) {
+        JOptionPane.showMessageDialog(
+                frame,
+                historiqueTexte,
+                "Historique",
+                JOptionPane.INFORMATION_MESSAGE
+        );
     }
 
     @Override

@@ -8,6 +8,7 @@ import modele.Admin;
 import vue.IVueMenuPrincipal;
 import vue.IVueCatalog;
 import vue.IVueAdmin;
+import vue.IVueAbonne;
 
 import java.util.ArrayList;
 
@@ -23,20 +24,25 @@ public class ControleurMain {
 
     // Composants MVC
     private ControleUtilisateur controleUtilisateur;
-    private ControleurAdmin controleurAdmin;
-    private ControleurCatalogue controleurCatalogue;
     private IVueMenuPrincipal menuPrincipal;
+
+    private ControleurCatalogue controleurCatalogue;
     private IVueCatalog vueCatalog;
+
+    private ControleurAdmin controleurAdmin;
     private IVueAdmin vueAdmin;
 
-    public ControleurMain(IVueMenuPrincipal menuPrincipal, IVueCatalog vueCatalog, IVueAdmin vueAdmin) {
+    private ControleurAbonne controleurAbonne;
+    private IVueAbonne vueAbonne;
+
+    public ControleurMain(IVueMenuPrincipal menuPrincipal, IVueCatalog vueCatalog, IVueAdmin vueAdmin, IVueAbonne vueAbonne) {
         this.menuPrincipal = menuPrincipal;
         this.vueCatalog = vueCatalog;
         this.vueAdmin = vueAdmin;
+        this.vueAbonne = vueAbonne;
 
         this.catalogue = new Catalogue();
 
-        // Chargement catalogue
         ArrayList<Morceau> morceauxDuFichier = utilitaire.GestionnaireFichiers.chargerCatalogue();
 
         if (morceauxDuFichier != null && !morceauxDuFichier.isEmpty()) {
@@ -46,7 +52,6 @@ public class ControleurMain {
             System.out.println("[INFO] Catalogue chargé (" + morceauxDuFichier.size() + " morceaux).");
         }
 
-        // Chargement utilisateurs
         this.listeAbonnes = utilitaire.GestionnaireFichiers.chargerAbonnes();
         this.listeAdmin = utilitaire.GestionnaireFichiers.chargerAdmins();
 
@@ -57,7 +62,6 @@ public class ControleurMain {
             listeAdmin = new ArrayList<>();
         }
 
-        // Données test si vide
         if (catalogue.getMorceaux().isEmpty()) {
             creerDonneesTest();
             System.out.println("[INFO] Données de test utilisées.");
@@ -66,10 +70,13 @@ public class ControleurMain {
         this.abonneConnecte = null;
         this.adminConnecte = null;
 
-        // Contrôleurs
         this.controleUtilisateur = new ControleUtilisateur();
         this.controleurAdmin = new ControleurAdmin(vueAdmin);
         this.controleurCatalogue = new ControleurCatalogue(vueCatalog, menuPrincipal);
+        this.controleurAbonne = new ControleurAbonne(vueAbonne, controleurCatalogue);
+    }
+
+    private void controleur() {
     }
 
     public void lancer() {
@@ -92,7 +99,7 @@ public class ControleurMain {
                     seConnecterAbonne();
                     if (abonneConnecte != null) {
                         menuPrincipal.afficherMessage("Connexion client réussie !");
-                        gererCatalogue();
+                        controleurAbonne.menuAbonne(abonneConnecte, catalogue);
                         deconnexion();
                     }
                     break;

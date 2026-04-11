@@ -91,7 +91,7 @@ public class ControleurCatalogue {
         return null;
     }
 
-    private void ecouter(Morceau m, Utilisateur u) {
+    public boolean ecouter(Morceau m, Utilisateur u) {
         if (u.peutEcouter()) {
             System.out.println("\n[LECTURE] " + m.getTitre() + " - " + m.getArtiste());
 
@@ -104,8 +104,12 @@ public class ControleurCatalogue {
             u.ecouter();
             m.ecouter();
 
-        } else {
-            menuPrincipal.afficherErreur("Limite de 5 écoutes atteinte.");
+            if (u instanceof Abonne) {
+                ((Abonne) u).ajouterHistorique(m);
+            }
+
+            return true;
         }
+        return false;
     }
 }
