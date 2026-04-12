@@ -3,36 +3,121 @@ package vue;
 import modele.Artiste;
 import modele.Morceau;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class VueCatalogSwing implements IVueCatalog {
 
+    private JFrame frame;
+
+    private JButton btnRechercheMorceau;
+    private JButton btnRechercheArtiste;
+    private JButton btnAfficherTous;
+    private JButton btnRetour;
+
+    private JLabel labelMessage;
+    private DefaultListModel<String> modeleListe;
+    private JList<String> listeVisuelle;
+
+    private int choix = -1;
+
+    public VueCatalogSwing() {
+        frame = new JFrame("JAVAZIC - Catalogue");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(1100, 700);
+        frame.setMinimumSize(new Dimension(850, 550));
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(true);
+
+        initialiserInterface();
+    }
+
+    private void initialiserInterface() {
+        Color fond = new Color(245, 245, 245);
+        Color couleurBouton = new Color(220, 230, 240);
+        Color couleurRetour = new Color(235, 235, 235);
+
+        JPanel principal = new JPanel(new BorderLayout(15, 15));
+        principal.setBackground(fond);
+        principal.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        JLabel titre = new JLabel("Catalogue musical", SwingConstants.CENTER);
+        titre.setFont(new Font("Arial", Font.BOLD, 28));
+        principal.add(titre, BorderLayout.NORTH);
+
+        JPanel panneauGauche = new JPanel(new GridLayout(4, 1, 12, 12));
+        panneauGauche.setBackground(fond);
+        panneauGauche.setPreferredSize(new Dimension(260, 0));
+
+        btnRechercheMorceau = new JButton("Rechercher un morceau");
+        btnRechercheArtiste = new JButton("Rechercher un artiste");
+        btnAfficherTous = new JButton("Afficher tous les morceaux");
+        btnRetour = new JButton("Retour au menu principal");
+
+        JButton[] boutons = {
+                btnRechercheMorceau,
+                btnRechercheArtiste,
+                btnAfficherTous
+        };
+
+        for (JButton bouton : boutons) {
+            bouton.setBackground(couleurBouton);
+            bouton.setFocusPainted(false);
+            bouton.setFont(new Font("Arial", Font.PLAIN, 16));
+            panneauGauche.add(bouton);
+        }
+
+        btnRetour.setBackground(couleurRetour);
+        btnRetour.setFocusPainted(false);
+        btnRetour.setFont(new Font("Arial", Font.PLAIN, 16));
+        panneauGauche.add(btnRetour);
+
+        principal.add(panneauGauche, BorderLayout.WEST);
+
+        modeleListe = new DefaultListModel<>();
+        listeVisuelle = new JList<>(modeleListe);
+        listeVisuelle.setFont(new Font("Arial", Font.PLAIN, 16));
+        listeVisuelle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        JScrollPane scrollPane = new JScrollPane(listeVisuelle);
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Morceaux"));
+        principal.add(scrollPane, BorderLayout.CENTER);
+
+        labelMessage = new JLabel("Bienvenue dans le catalogue");
+        labelMessage.setFont(new Font("Arial", Font.PLAIN, 14));
+        principal.add(labelMessage, BorderLayout.SOUTH);
+
+        frame.setContentPane(principal);
+
+        // Compatibles avec ton switch
+        btnRechercheMorceau.addActionListener(e -> choix = 1);
+        btnRechercheArtiste.addActionListener(e -> choix = 2);
+        btnAfficherTous.addActionListener(e -> choix = 3);
+        btnRetour.addActionListener(e -> choix = 4);
+    }
+
     @Override
     public int afficherMenuCatalogue() {
-        String saisie = JOptionPane.showInputDialog(
-                null,
-                "--- NAVIGATION CATALOGUE ---\n"
-                        + "1. Rechercher un morceau\n"
-                        + "2. Rechercher un artiste ou un groupe\n"
-                        + "3. Afficher tous les morceaux\n"
-                        + "4. Retour au menu principal\n\n"
-                        + "Votre choix :",
-                "Catalogue",
-                JOptionPane.QUESTION_MESSAGE
-        );
+        choix = -1;
+        frame.setVisible(true);
 
-        try {
-            return Integer.parseInt(saisie);
-        } catch (Exception e) {
-            return -1;
+        while (choix == -1) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return -1;
+            }
         }
+
+        return choix;
     }
 
     @Override
     public String demanderRecherche() {
         String saisie = JOptionPane.showInputDialog(
-                null,
+                frame,
                 "Entrez votre recherche :",
                 "Recherche",
                 JOptionPane.QUESTION_MESSAGE
@@ -43,71 +128,68 @@ public class VueCatalogSwing implements IVueCatalog {
     @Override
     public Morceau selectionnerMorceau(ArrayList<Morceau> liste) {
         if (liste == null || liste.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Aucun morceau trouvé.",
-                    "Catalogue",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            afficherMessage("Aucun morceau trouvé.");
             return null;
         }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("--- RESULTATS ---\n");
-        for (int i = 0; i < liste.size(); i++) {
-            sb.append(i + 1).append(". ").append(liste.get(i).toString()).append("\n");
-        }
-        sb.append("\n0. Annuler\n");
-        sb.append("Choisissez un morceau :");
+        mettreAJourListeMorceaux(liste);
 
-        String saisie = JOptionPane.showInputDialog(
-                null,
-                sb.toString(),
+        JOptionPane.showMessageDialog(
+                frame,
+                "Sélectionnez un morceau dans la liste puis validez.",
                 "Choix du morceau",
-                JOptionPane.QUESTION_MESSAGE
+                JOptionPane.INFORMATION_MESSAGE
         );
 
-        try {
-            int choix = Integer.parseInt(saisie);
-            if (choix > 0 && choix <= liste.size()) {
-                return liste.get(choix - 1);
-            }
-        } catch (Exception e) {
-            return null;
+        int index = listeVisuelle.getSelectedIndex();
+
+        if (index >= 0 && index < liste.size()) {
+            return liste.get(index);
         }
 
+        afficherErreur("Aucun morceau sélectionné.");
         return null;
+    }
+
+    public void mettreAJourListeMorceaux(ArrayList<Morceau> liste) {
+        modeleListe.clear();
+
+        if (liste == null || liste.isEmpty()) {
+            modeleListe.addElement("Aucun morceau à afficher");
+            return;
+        }
+
+        for (Morceau morceau : liste) {
+            modeleListe.addElement(morceau.toString());
+        }
+
+        labelMessage.setText(liste.size() + " morceau(x) affiché(s)");
     }
 
     @Override
     public void afficherInfosArtiste(Artiste artiste) {
         if (artiste == null) {
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Artiste non trouvé.",
-                    "Artiste",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            afficherErreur("Artiste non trouvé.");
             return;
         }
 
-        String message = "--- FICHE ARTISTE ---\n"
-                + "Nom : " + artiste.getNom() + "\n"
-                + "Nombre d'albums : " + artiste.getAlbums().size() + "\n"
-                + "Nombre de morceaux : " + artiste.getMorceaux().size();
+        String message = "Nom : " + artiste.getNom()
+                + "\nNombre d'albums : " + artiste.getAlbums().size()
+                + "\nNombre de morceaux : " + artiste.getMorceaux().size();
 
         JOptionPane.showMessageDialog(
-                null,
+                frame,
                 message,
-                "Artiste",
+                "Fiche artiste",
                 JOptionPane.INFORMATION_MESSAGE
         );
     }
 
     @Override
     public void afficherMessage(String msg) {
+        labelMessage.setText(msg);
         JOptionPane.showMessageDialog(
-                null,
+                frame,
                 msg,
                 "Information",
                 JOptionPane.INFORMATION_MESSAGE
@@ -116,11 +198,24 @@ public class VueCatalogSwing implements IVueCatalog {
 
     @Override
     public void afficherErreur(String erreur) {
+        labelMessage.setText(erreur);
         JOptionPane.showMessageDialog(
-                null,
+                frame,
                 erreur,
                 "Erreur",
                 JOptionPane.ERROR_MESSAGE
         );
+    }
+
+    public JFrame getFrame() {
+        return frame;
+    }
+
+    public void setVisible(boolean visible) {
+        frame.setVisible(visible);
+    }
+
+    public void dispose() {
+        frame.dispose();
     }
 }

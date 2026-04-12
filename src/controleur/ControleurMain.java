@@ -104,7 +104,7 @@ public class ControleurMain {
                 case 2:
                     seConnecterAbonne();
                     if (abonneConnecte != null) {
-                        menuPrincipal.afficherMessage("Connexion client réussie !");
+
                         controleurAbonne.menuAbonne(abonneConnecte, catalogue);
                         deconnexion();
                     }
@@ -115,12 +115,12 @@ public class ControleurMain {
                     break;
 
                 case 4:
-                    menuPrincipal.afficherMessage("Mode visiteur (limite de 5 écoutes).");
+
                     gererCatalogue();
                     break;
 
                 case 5:
-                    menuPrincipal.afficherMessage("Sauvegarde...");
+
                     utilitaire.GestionnaireFichiers.sauvegarderTout(
                             listeAbonnes,
                             listeAdmin,
