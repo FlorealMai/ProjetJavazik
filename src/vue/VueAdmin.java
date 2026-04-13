@@ -2,6 +2,7 @@ package vue;
 
 import java.util.Scanner;
 
+
 public class VueAdmin implements IVueAdmin{
 
     private Scanner sc = new Scanner(System.in);
@@ -61,4 +62,6 @@ public class VueAdmin implements IVueAdmin{
     public void afficherMessage(String msg) {
         System.out.println(msg);
     }
+
+
 }

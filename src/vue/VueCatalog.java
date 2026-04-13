@@ -131,4 +131,7 @@ public class VueCatalog implements IVueCatalog {
     public void arreterEcoute() {
         System.out.println(arrete ? "\n[LECTURE INTERROMPUE]" : "\n[FIN DE LA LECTURE]");
     }
+
+
+
 }

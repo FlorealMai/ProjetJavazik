@@ -24,39 +24,54 @@ public class ControleurCatalogue {
 
             switch (choix) {
 
-                case 1: // Recherche titre
+                case 1: // Recherche par titre
                     String recherche = vueCatalog.demanderRecherche();
                     ArrayList<Morceau> resultats = rechercherMorceau(recherche, catalogue);
 
-                    Morceau selection = vueCatalog.selectionnerMorceau(resultats);
-
-                    if (selection != null) {
-                        ecouter(selection, utilisateurActuel);
+                    boolean resterDansRecherche = true;
+                    while (resterDansRecherche) {
+                        Morceau selection = vueCatalog.selectionnerMorceau(resultats);
+                        if (selection != null) {
+                            ecouter(selection, utilisateurActuel);
+                        } else {
+                            resterDansRecherche = false;
+                        }
                     }
                     break;
 
-                case 2: // Recherche artiste
+                case 2: // Recherche par artiste
                     String nomArtiste = vueCatalog.demanderRecherche();
                     Artiste artiste = rechercherArtiste(nomArtiste, catalogue);
 
                     if (artiste != null) {
                         ArrayList<Morceau> morceaux = artiste.getMorceaux();
-                        Morceau choixArtiste = vueCatalog.selectionnerMorceau(morceaux);
 
-                        if (choixArtiste != null) {
-                            ecouter(choixArtiste, utilisateurActuel);
+                        boolean resterDansArtiste = true;
+                        while (resterDansArtiste) {
+                            Morceau selectionArtiste = vueCatalog.selectionnerMorceau(morceaux);
+                            if (selectionArtiste != null) {
+                                ecouter(selectionArtiste, utilisateurActuel);
+                            } else {
+                                resterDansArtiste = false;
+                            }
                         }
                     } else {
-                        menuPrincipal.afficherErreur("Artiste introuvable.");
+                        menuPrincipal.afficherMessage("Artiste introuvable.");
                     }
                     break;
 
-                case 3: // Tout afficher
+                case 3: // tous afficher
                     ArrayList<Morceau> tous = catalogue.getMorceaux();
-                    Morceau choixTout = vueCatalog.selectionnerMorceau(tous);
 
-                    if (choixTout != null) {
-                        ecouter(choixTout, utilisateurActuel);
+                    boolean resterDansTous = true;
+                    while (resterDansTous) {
+                        Morceau choixTous = vueCatalog.selectionnerMorceau(tous);
+
+                        if (choixTous != null) {
+                            ecouter(choixTous, utilisateurActuel);
+                        } else {
+                            resterDansTous = false;
+                        }
                     }
                     break;
 

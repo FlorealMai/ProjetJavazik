@@ -47,7 +47,7 @@ public class ControleurAbonne {
                     break;
 
                 case 5:
-                    afficherPlaylists(abonne);
+                    gererEcoutePlaylists(abonne);
                     break;
 
                 case 6:
@@ -111,7 +111,6 @@ public class ControleurAbonne {
         listeTriee.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
 
         StringBuilder sb = new StringBuilder();
-        sb.append("\n--- VOS RECOMMANDATIONS ---\n");
 
         int limite = Math.min(listeTriee.size(), 5);
         for (int i = 0; i < limite; i++) {
@@ -120,9 +119,7 @@ public class ControleurAbonne {
                     .append(entree.getKey())
                     .append("\n");
         }
-
-        // 6. Envoi à la vue
-        vueAbonne.afficherHistorique(sb.toString());
+        vueAbonne.afficherRecommandations(sb.toString());
     }
 
     private void afficherInfos(Abonne abonne) {
@@ -254,5 +251,69 @@ public class ControleurAbonne {
         vueAbonne.afficherMessage("Morceau ajouté à la playlist.");
 
 
+    }
+    private void gererEcoutePlaylists(Abonne abonne) {
+        boolean resterDansPlaylists = true;
+
+        while (resterDansPlaylists) {
+            // L'utilisateur choisit visuellement une de ses playlists
+            Playlist p = vueAbonne.selectionnerPlaylist(abonne.getPlaylists());
+
+            if (p != null) {
+                boolean resterDansMorceaux = true;
+                while (resterDansMorceaux) {
+                    // L'utilisateur choisit visuellement un morceau dedans
+                    Morceau m = vueAbonne.selectionnerMorceauDansPlaylist(p);
+
+                    if (m != null) {
+                        ecouterDepuisAbonne(m, abonne); // La musique se lance !
+                    } else {
+                        resterDansMorceaux = false; // Il retourne en arrière (aux playlists)
+                    }
+                }
+            } else {
+                resterDansPlaylists = false; // L'utilisateur a cliqué sur le menu de gauche
+            }
+        }
+    }
+
+    // ecouter musique pour abonne
+    private boolean ecouterDepuisAbonne(Morceau m, Abonne abonne) {
+        if (abonne.peutEcouter()) {
+            float dureeBrute = m.getDuree();
+            int minutes = (int) dureeBrute;
+            int secondes = Math.round((dureeBrute - minutes) * 100);
+            int tempsRestantEnSecondes = (minutes * 60) + secondes;
+
+            vueAbonne.afficherEcoute(m, tempsRestantEnSecondes);
+
+            int tempsEcoule = 0;
+            while (tempsEcoule < tempsRestantEnSecondes && !vueAbonne.isArrete()) {
+                try {
+                    if (!vueAbonne.isEnPause()) {
+                        Thread.sleep(1000);
+                        tempsEcoule++;
+                        vueAbonne.majProgression(tempsEcoule, tempsRestantEnSecondes);
+                    } else {
+                        Thread.sleep(200);
+                    }
+                } catch (Exception e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+
+            vueAbonne.arreterEcoute();
+
+            abonne.ecouter();
+            m.ecouter();
+            abonne.ajouterHistorique(m);
+            utilitaire.GestionnaireFichiers.enregistrerEcoute(abonne.getLogin(), m.getTitre());
+
+            return true;
+        } else {
+            vueAbonne.afficherErreur("Limite d'écoutes atteinte.");
+            return false;
+        }
     }
 }
