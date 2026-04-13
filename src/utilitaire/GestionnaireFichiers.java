@@ -13,6 +13,7 @@ public class GestionnaireFichiers {
     private static final String FILE_ADMINS = "admins.txt";
     private static final String FILE_CATALOGUE = "catalogue.txt";
     private static final String FILE_PLAYLISTS = "playlists.txt";
+    private static final String FILE_HISTORIQUE = "historique.txt";
     // ==========================================================
     // MÉTHODES DE SAUVEGARDE (Écriture)
     // ==========================================================
@@ -117,6 +118,28 @@ public class GestionnaireFichiers {
         }
         return liste;
     }
+
+    public static ArrayList<String> chargerHistorique(String loginUtilisateur) {
+        ArrayList<String> titres = new ArrayList<>();
+        File fichier = new File("historique.txt");
+
+        if (!fichier.exists()) return titres;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(fichier))) {
+            String ligne;
+            while ((ligne = br.readLine()) != null) {
+                String[] parts = ligne.split(";");
+                // Format du fichier : login;titre
+                if (parts.length >= 2 && parts[0].equalsIgnoreCase(loginUtilisateur)) {
+                    titres.add(parts[1]);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Erreur technique de lecture : " + e.getMessage());
+        }
+        return titres;
+    }
+
 //-----------------------------------------------
 //          SAUVEGARDE PLAY LISTS
 //-----------------------------------------------
@@ -186,6 +209,14 @@ public class GestionnaireFichiers {
             }
         }
         return null;
+    }
+
+    public static void enregistrerEcoute(String login, String titreMorceau) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_HISTORIQUE, true))) {
+            writer.println(login + ";" + titreMorceau);
+        } catch (IOException e) {
+            System.err.println("Erreur lors de l'enregistrement de l'historique : " + e.getMessage());
+        }
     }
 
     private static Morceau trouverMorceauParTitre(String titre, ArrayList<Morceau> catalogue) {

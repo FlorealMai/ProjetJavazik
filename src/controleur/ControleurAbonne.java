@@ -53,8 +53,10 @@ public class ControleurAbonne {
                 case 6:
                     ajouterMorceauAPlaylist(abonne, catalogue);
                     break;
-
                 case 7:
+                    afficherRecommandations(abonne);
+                    break;
+                case 8:
                     quitter = true;
                     break;
 
@@ -66,24 +68,60 @@ public class ControleurAbonne {
     }
 
     private void afficherHistorique(Abonne abonne) {
-        ArrayList<Morceau> historique = abonne.getHistorique();
+        ArrayList<String> historiqueBrut = utilitaire.GestionnaireFichiers.chargerHistorique(abonne.getLogin());
 
-        if (historique == null || historique.isEmpty()) {
-            vueAbonne.afficherMessage("Aucun morceau écouté.");
+        if (historiqueBrut.isEmpty()) {
+            vueAbonne.afficherHistorique("Aucune écoute enregistrée.");
             return;
         }
 
+        java.util.Map<String, Integer> compteur = new java.util.HashMap<>();
+
+        for (String titre : historiqueBrut) {
+            // permet de compter le nb de fois ecouté
+            compteur.put(titre, compteur.getOrDefault(titre, 0) + 1);
+        }
+
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < historique.size(); i++) {
-            Morceau m = historique.get(i);
-            sb.append(i + 1)
-                    .append(". ")
-                    .append(m.getTitre())
-                    .append(" - ")
-                    .append(m.getArtiste())
+        for (java.util.Map.Entry<String, Integer> entree : compteur.entrySet()) {
+            sb.append("- ").append(entree.getKey())
+                    .append(" - ").append(entree.getValue())
                     .append("\n");
         }
 
+        vueAbonne.afficherHistorique(sb.toString());
+    }
+
+    private void afficherRecommandations(Abonne abonne) {
+        ArrayList<String> historiqueBrut = utilitaire.GestionnaireFichiers.chargerHistorique(abonne.getLogin());
+
+        if (historiqueBrut == null || historiqueBrut.isEmpty()) {
+            vueAbonne.afficherMessage("Écoutez quelques morceaux pour recevoir des recommandations !");
+            return;
+        }
+
+        // on compte le nb d écoute
+        java.util.Map<String, Integer> compteur = new java.util.HashMap<>();
+        for (String titre : historiqueBrut) {
+            compteur.put(titre, compteur.getOrDefault(titre, 0) + 1);
+        }
+
+        // tri par ecoute
+        java.util.List<java.util.Map.Entry<String, Integer>> listeTriee = new java.util.ArrayList<>(compteur.entrySet());
+        listeTriee.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n--- VOS RECOMMANDATIONS ---\n");
+
+        int limite = Math.min(listeTriee.size(), 5);
+        for (int i = 0; i < limite; i++) {
+            java.util.Map.Entry<String, Integer> entree = listeTriee.get(i);
+            sb.append(i + 1).append(". ")
+                    .append(entree.getKey())
+                    .append("\n");
+        }
+
+        // 6. Envoi à la vue
         vueAbonne.afficherHistorique(sb.toString());
     }
 

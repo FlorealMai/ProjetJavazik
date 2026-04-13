@@ -8,12 +8,12 @@ public class Album {
     private ArrayList<Morceau> morceaux;
     private int annee;
 
-    public Album(String titre) {
-        this.titre = titre;
-        this.nomAuteur = nomAuteur ;
-        this.morceaux = new ArrayList<>();
-        this.annee = annee;
 
+    public Album(String titre, String nomAuteur, int annee) {
+        this.titre = titre;
+        this.nomAuteur = nomAuteur;
+        this.annee = annee;
+        this.morceaux = new ArrayList<>();
     }
 
     public String getTitre() {

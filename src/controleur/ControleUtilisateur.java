@@ -4,6 +4,10 @@ import modele.Abonne;
 import java.util.ArrayList;
 
 public class ControleUtilisateur {
+    private int compteurEcoutes = 0;
+    private final int LIMITE = 5;
+
+
 
     /**
      * Vérifie si un login est déjà utilisé par un autre abonné.
@@ -37,4 +41,6 @@ public class ControleUtilisateur {
         }
         return null;
     }
+    
+
 }

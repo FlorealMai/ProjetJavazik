@@ -82,34 +82,96 @@ public class ControleurCatalogue {
         return resultats;
     }
 
+
+
     public Artiste rechercherArtiste(String nom, Catalogue catalogue) {
-        for (Artiste a : catalogue.getArtistes()) {
-            if (a.getNom().equalsIgnoreCase(nom)) {
-                return a;
+        Artiste resultat = new Artiste(nom);
+        boolean trouve = false;
+
+        for (Morceau m : catalogue.getMorceaux()) {
+            if (m.getArtiste().equalsIgnoreCase(nom)) {
+                resultat.ajouterMorceau(m);
+                trouve = true;
             }
         }
-        return null;
+        return trouve ? resultat : null;
     }
 
     public boolean ecouter(Morceau m, Utilisateur u) {
         if (u.peutEcouter()) {
             System.out.println("\n[LECTURE] " + m.getTitre() + " - " + m.getArtiste());
 
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+            //calcul de durée
+            float dureeBrute = m.getDuree();
+            int minutes = (int) dureeBrute;
+            // recuperer juste apres la virgule et la multip par 100
+            int secondes = Math.round((dureeBrute - minutes) * 100);
+            int tempsRestantEnSecondes = (minutes * 60) + secondes;
+
+            int tempsEcoule = 0;
+            boolean enPause = false;
+            boolean arrete = false;
+            java.util.Scanner sc = new java.util.Scanner(System.in);
+
+            System.out.println("Durée totale : " + minutes + "m " + secondes + "s");
+            System.out.println("Commandes : [p] Pause/Reprise | [q] Arrêter");
+
+            // boucle de ecoute
+            while (tempsEcoule < tempsRestantEnSecondes && !arrete) {
+                try {
+                    if (!enPause) {
+                        // on simule le temps
+                        Thread.sleep(1000);
+                        tempsEcoule++;
+
+                        // barre progretion
+                        System.out.print("\rProgression : " + tempsEcoule + "s / " + tempsRestantEnSecondes + "s ");
+                    } else {
+                        // att pour pause
+                        Thread.sleep(200);
+                    }
+
+                    // dtection clavier
+                    if (System.in.available() > 0) {
+                        String commande = sc.nextLine().toLowerCase();
+                        if (commande.equals("p")) {
+                            enPause = !enPause;
+                            System.out.println(enPause ? "\n[PAUSE]" : "\n[REPRISE]");
+                        } else if (commande.equals("q")) {
+                            arrete = true;
+                        }
+                    }
+                } catch (Exception e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
             }
 
+
+            if (arrete) {
+                System.out.println("\n[LECTURE INTERROMPUE]");
+            } else {
+                System.out.println("\n[FIN DE LA LECTURE]");
+            }
+
+            // updtade stat et historique
             u.ecouter();
             m.ecouter();
 
             if (u instanceof Abonne) {
-                ((Abonne) u).ajouterHistorique(m);
+                Abonne abonne = (Abonne) u;
+                abonne.ajouterHistorique(m);
+                utilitaire.GestionnaireFichiers.enregistrerEcoute(abonne.getLogin(), m.getTitre());
             }
 
             return true;
+        } else {
+            System.out.println("\nErreur : Limite d'écoutes atteinte pour votre profil.");
+            return false;
         }
-        return false;
     }
+
 }
+
+
+

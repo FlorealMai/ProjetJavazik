@@ -19,7 +19,8 @@ public class VueAbonne implements IVueAbonne {
         System.out.println("4. Créer une playlist");
         System.out.println("5. Voir mes playlists");
         System.out.println("6. Ajouter un morceau à une playlist");
-        System.out.println("7. Déconnexion");
+        System.out.println("7. Mes Recommandations");
+        System.out.println("8. Déconnexion");
         System.out.print("Votre choix : ");
 
         while (!scanner.hasNextInt()) {

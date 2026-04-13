@@ -14,6 +14,7 @@ public class VueAbonneSwing implements IVueAbonne {
     private JButton btnVoirPlaylists;
     private JButton btnAjouterPlaylist;
     private JButton btnDeconnexion;
+    private JButton btnRecommandations;
 
     private JTextArea zoneContenu;
     private JLabel labelMessage;
@@ -44,7 +45,7 @@ public class VueAbonneSwing implements IVueAbonne {
         titre.setFont(new Font("Arial", Font.BOLD, 28));
         principal.add(titre, BorderLayout.NORTH);
 
-        JPanel panneauGauche = new JPanel(new GridLayout(7, 1, 12, 12));
+        JPanel panneauGauche = new JPanel(new GridLayout(8, 1, 12, 12));
         panneauGauche.setBackground(fond);
         panneauGauche.setPreferredSize(new Dimension(270, 0));
 
@@ -54,6 +55,7 @@ public class VueAbonneSwing implements IVueAbonne {
         btnCreerPlaylist = new JButton("Créer une playlist");
         btnVoirPlaylists = new JButton("Voir mes playlists");
         btnAjouterPlaylist = new JButton("Ajouter à une playlist");
+        btnRecommandations = new JButton("Mes Recommandations");
         btnDeconnexion = new JButton("Déconnexion");
 
         JButton[] boutons = {
@@ -62,7 +64,8 @@ public class VueAbonneSwing implements IVueAbonne {
                 btnInfos,
                 btnCreerPlaylist,
                 btnVoirPlaylists,
-                btnAjouterPlaylist
+                btnAjouterPlaylist,
+                btnRecommandations
         };
 
         for (JButton bouton : boutons) {
@@ -103,7 +106,8 @@ public class VueAbonneSwing implements IVueAbonne {
         btnCreerPlaylist.addActionListener(e -> choix = 4);
         btnVoirPlaylists.addActionListener(e -> choix = 5);
         btnAjouterPlaylist.addActionListener(e -> choix = 6);
-        btnDeconnexion.addActionListener(e -> choix = 7);
+        btnRecommandations.addActionListener(e -> choix = 7);
+        btnDeconnexion.addActionListener(e -> choix = 8);
     }
 
     @Override

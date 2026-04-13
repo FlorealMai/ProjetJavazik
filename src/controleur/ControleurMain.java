@@ -163,7 +163,6 @@ public class ControleurMain {
             menuPrincipal.afficherErreur("Identifiants incorrects.");
         }
     }
-
     private void creerCompte() {
         String[] ids = menuPrincipal.demanderIdentifiants();
         String nom = vueAdmin.demanderTexte("Nom complet : ");
@@ -172,9 +171,13 @@ public class ControleurMain {
             menuPrincipal.afficherErreur("Login déjà utilisé.");
         } else {
             controleUtilisateur.inscrireNouvelAbonne(ids[0], ids[1], nom, listeAbonnes);
-            menuPrincipal.afficherMessage("Compte créé !");
+
+            utilitaire.GestionnaireFichiers.sauvegarderAbonnes(listeAbonnes);
+
+            menuPrincipal.afficherMessage("Compte créé et enregistré !");
         }
     }
+
 
     private void gererCatalogue() {
         Utilisateur utilisateurActuel = (abonneConnecte != null)
