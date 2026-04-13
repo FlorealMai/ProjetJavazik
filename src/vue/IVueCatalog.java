@@ -16,4 +16,11 @@ public interface IVueCatalog {
     void afficherMessage(String msg);
 
     void afficherErreur(String erreur);
+
+    void afficherEcoute(Morceau m, int dureeTotale);
+    void majProgression(int tempsEcoule, int dureeTotale);
+    boolean isEnPause();
+    boolean isArrete();
+    void arreterEcoute();
+
 }

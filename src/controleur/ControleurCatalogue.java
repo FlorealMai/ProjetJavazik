@@ -99,47 +99,25 @@ public class ControleurCatalogue {
 
     public boolean ecouter(Morceau m, Utilisateur u) {
         if (u.peutEcouter()) {
-            System.out.println("\n[LECTURE] " + m.getTitre() + " - " + m.getArtiste());
-
-            //calcul de durée
             float dureeBrute = m.getDuree();
             int minutes = (int) dureeBrute;
-            // recuperer juste apres la virgule et la multip par 100
             int secondes = Math.round((dureeBrute - minutes) * 100);
             int tempsRestantEnSecondes = (minutes * 60) + secondes;
 
+            // On demande à la vue d'afficher le lecteur (Console ou Graphique)
+            vueCatalog.afficherEcoute(m, tempsRestantEnSecondes);
+
             int tempsEcoule = 0;
-            boolean enPause = false;
-            boolean arrete = false;
-            java.util.Scanner sc = new java.util.Scanner(System.in);
 
-            System.out.println("Durée totale : " + minutes + "m " + secondes + "s");
-            System.out.println("Commandes : [p] Pause/Reprise | [q] Arrêter");
-
-            // boucle de ecoute
-            while (tempsEcoule < tempsRestantEnSecondes && !arrete) {
+            // La boucle tourne tant qu'on a pas fini et que l'utilisateur n'a pas cliqué sur Arrêter
+            while (tempsEcoule < tempsRestantEnSecondes && !vueCatalog.isArrete()) {
                 try {
-                    if (!enPause) {
-                        // on simule le temps
+                    if (!vueCatalog.isEnPause()) {
                         Thread.sleep(1000);
                         tempsEcoule++;
-
-                        // barre progretion
-                        System.out.print("\rProgression : " + tempsEcoule + "s / " + tempsRestantEnSecondes + "s ");
+                        vueCatalog.majProgression(tempsEcoule, tempsRestantEnSecondes);
                     } else {
-                        // att pour pause
-                        Thread.sleep(200);
-                    }
-
-                    // dtection clavier
-                    if (System.in.available() > 0) {
-                        String commande = sc.nextLine().toLowerCase();
-                        if (commande.equals("p")) {
-                            enPause = !enPause;
-                            System.out.println(enPause ? "\n[PAUSE]" : "\n[REPRISE]");
-                        } else if (commande.equals("q")) {
-                            arrete = true;
-                        }
+                        Thread.sleep(200); // En pause, on attend juste
                     }
                 } catch (Exception e) {
                     Thread.currentThread().interrupt();
@@ -147,14 +125,9 @@ public class ControleurCatalogue {
                 }
             }
 
+            // On cache le lecteur
+            vueCatalog.arreterEcoute();
 
-            if (arrete) {
-                System.out.println("\n[LECTURE INTERROMPUE]");
-            } else {
-                System.out.println("\n[FIN DE LA LECTURE]");
-            }
-
-            // updtade stat et historique
             u.ecouter();
             m.ecouter();
 
@@ -166,7 +139,7 @@ public class ControleurCatalogue {
 
             return true;
         } else {
-            System.out.println("\nErreur : Limite d'écoutes atteinte pour votre profil.");
+            menuPrincipal.afficherErreur("Limite d'écoutes atteinte pour votre profil.");
             return false;
         }
     }

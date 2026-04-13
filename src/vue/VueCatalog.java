@@ -86,4 +86,49 @@ public class VueCatalog implements IVueCatalog {
     public void afficherErreur(String erreur) {
         System.out.println("Erreur : " + erreur);
     }
+
+    private boolean enPause = false;
+    private boolean arrete = false;
+
+    @Override
+    public void afficherEcoute(Morceau m, int dureeTotale) {
+        System.out.println("\n[LECTURE] " + m.getTitre() + " - " + m.getArtiste());
+        System.out.println("Durée totale : " + (dureeTotale / 60) + "m " + (dureeTotale % 60) + "s");
+        System.out.println("Commandes : Tapez 'p' + Entrée (Pause) | 'q' + Entrée (Arrêter)");
+        enPause = false;
+        arrete = false;
+    }
+
+    @Override
+    public void majProgression(int tempsEcoule, int dureeTotale) {
+        System.out.print("\rProgression : " + tempsEcoule + "s / " + dureeTotale + "s ");
+    }
+
+    private void lireSaisieConsole() {
+        try {
+            if (System.in.available() > 0) {
+                byte[] bytes = new byte[System.in.available()];
+                System.in.read(bytes);
+                String saisie = new String(bytes).trim().toLowerCase();
+
+                if (saisie.contains("p")) {
+                    enPause = !enPause;
+                    System.out.println(enPause ? "\n[PAUSE]" : "\n[REPRISE]");
+                } else if (saisie.contains("q")) {
+                    arrete = true;
+                }
+            }
+        } catch (Exception e) {}
+    }
+
+    @Override
+    public boolean isEnPause() { lireSaisieConsole(); return enPause; }
+
+    @Override
+    public boolean isArrete() { lireSaisieConsole(); return arrete; }
+
+    @Override
+    public void arreterEcoute() {
+        System.out.println(arrete ? "\n[LECTURE INTERROMPUE]" : "\n[FIN DE LA LECTURE]");
+    }
 }
