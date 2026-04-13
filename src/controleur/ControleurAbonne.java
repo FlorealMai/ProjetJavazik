@@ -153,18 +153,44 @@ public class ControleurAbonne {
         }
 
         StringBuilder sb = new StringBuilder();
+        sb.append("--- VOS PLAYLISTS ---\n");
         for (int i = 0; i < playlists.size(); i++) {
-            Playlist p = playlists.get(i);
-            sb.append(i + 1)
-                    .append(". ")
-                    .append(p.getNom())
-                    .append(" (")
-                    .append(p.getMorceaux().size())
-                    .append(" morceaux)")
-                    .append("\n");
+            sb.append(i + 1).append(". ").append(playlists.get(i).getNom()).append("\n");
         }
+        sb.append("0. Retour");
 
-        vueAbonne.afficherPlaylists(sb.toString());
+        int choixP = vueAbonne.demanderChoix(sb.toString() + "\nQuelle playlist voulez-vous ouvrir ?");
+
+        if (choixP > 0 && choixP <= playlists.size()) {
+            Playlist pSelectionnee = playlists.get(choixP - 1);
+            boolean resterDansPlaylist = true;
+
+            while (resterDansPlaylist) {
+                ArrayList<Morceau> morceaux = pSelectionnee.getMorceaux();
+                StringBuilder sbDetail = new StringBuilder();
+                sbDetail.append("\n--- CONTENU : ").append(pSelectionnee.getNom()).append(" ---\n");
+
+                if (morceaux.isEmpty()) {
+                    sbDetail.append("(Playlist vide)\n0. Retour");
+                    vueAbonne.afficherMessage(sbDetail.toString());
+                    resterDansPlaylist = false;
+                } else {
+                    for (int i = 0; i < morceaux.size(); i++) {
+                        sbDetail.append(i + 1).append(". ").append(morceaux.get(i).getTitre())
+                                .append(" - ").append(morceaux.get(i).getArtiste()).append("\n");
+                    }
+                    sbDetail.append("0. Quitter vers le menu abonnés");
+
+                    int choixM = vueAbonne.demanderChoix(sbDetail.toString() + "\nChoisissez un numéro pour écouter ou 0 pour quitter :");
+
+                    if (choixM > 0 && choixM <= morceaux.size()) {
+                        controleurCatalogue.ecouter(morceaux.get(choixM - 1), abonne);
+                    } else {
+                        resterDansPlaylist = false;
+                    }
+                }
+            }
+        }
     }
 
     private void ajouterMorceauAPlaylist(Abonne abonne, Catalogue catalogue) {

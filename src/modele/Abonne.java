@@ -68,4 +68,11 @@ public class Abonne extends Utilisateur {
         }
         return null;
     }
+
+    @Override
+    public boolean peutEcouter() {
+        // abonné peu tjr ecouté
+        return true;
+    }
+
 }

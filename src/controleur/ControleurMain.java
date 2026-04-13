@@ -49,7 +49,6 @@ public class ControleurMain {
             for (Morceau m : morceauxDuFichier) {
                 this.catalogue.ajouterMorceau(m);
             }
-            System.out.println("[INFO] Catalogue chargé (" + morceauxDuFichier.size() + " morceaux).");
         }
 
         this.listeAbonnes = utilitaire.GestionnaireFichiers.chargerAbonnes();
@@ -95,7 +94,6 @@ public class ControleurMain {
                 case 1:
                     seConnecterAdmin();
                     if (adminConnecte != null) {
-                        menuPrincipal.afficherMessage("Connexion admin réussie !");
                         controleurAdmin.menuAdmin(catalogue, listeAbonnes);
                         deconnexion();
                     }
@@ -180,10 +178,14 @@ public class ControleurMain {
 
 
     private void gererCatalogue() {
-        Utilisateur utilisateurActuel = (abonneConnecte != null)
-                ? abonneConnecte
-                : new Utilisateur();
+        Utilisateur utilisateurActuel;
 
+        if (abonneConnecte != null) {
+            utilisateurActuel = abonneConnecte;
+        } else {
+            // creation du visiteur qui aura que 5 ecoute
+            utilisateurActuel = new Utilisateur();
+        }
         controleurCatalogue.gererCatalogue(catalogue, utilisateurActuel);
     }
 
@@ -193,8 +195,8 @@ public class ControleurMain {
     }
 
     private void creerDonneesTest() {
-        ajouterSiInexistant("Baby Doll", 2.15f, "Ari Abdul");
-        ajouterSiInexistant("Sigma Boy", 1.45f, "Skibidi Toilet");
+        ajouterSiInexistant("Baby Doll", 2.15f, "Good Girl Gone Bad", "Ari Abdul");
+        ajouterSiInexistant("Sigma Boy", 1.45f, "Good Girl Gone Bad","Skibidi Toilet");
 
         if (listeAbonnes.isEmpty()) {
             listeAbonnes.add(new Abonne("user", "123", "Utilisateur Test"));
@@ -205,12 +207,12 @@ public class ControleurMain {
         }
     }
 
-    private void ajouterSiInexistant(String titre, float duree, String artiste) {
+    private void ajouterSiInexistant(String titre, float duree, String album, String artiste) {
         for (Morceau m : catalogue.getMorceaux()) {
             if (m.getTitre().equalsIgnoreCase(titre)) {
                 return;
             }
         }
-        catalogue.ajouterMorceau(new Morceau(titre, duree, artiste));
+        catalogue.ajouterMorceau(new Morceau(titre, duree, album, artiste));
     }
 }

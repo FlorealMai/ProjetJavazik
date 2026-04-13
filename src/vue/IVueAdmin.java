@@ -7,4 +7,5 @@ public interface IVueAdmin {
     String demanderTexte(String message);
     float demanderFloat(String message);
     void afficherMessage(String msg);
+    void afficherContenu(String texte);
 }

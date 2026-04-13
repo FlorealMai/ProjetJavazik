@@ -54,6 +54,10 @@ public class VueAdmin implements IVueAdmin{
         return valeur;
     }
 
+    public void afficherContenu(String texte) {
+        System.out.println(texte);
+    }
+
     public void afficherMessage(String msg) {
         System.out.println(msg);
     }

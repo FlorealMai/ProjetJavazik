@@ -5,6 +5,9 @@ import modele.Abonne;
 import modele.Catalogue;
 import modele.Morceau;
 import vue.IVueAdmin;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
 import utilitaire.GestionnaireFichiers;
 
 import java.util.ArrayList;
@@ -99,9 +102,10 @@ public class ControleurAdmin {
     private void ajouterMorceau(Catalogue catalogue) {
         String titre = vueAdmin.demanderTexte("Titre : ");
         String artiste = vueAdmin.demanderTexte("Artiste : ");
+        String album = vueAdmin.demanderTexte("Album : ");
         float duree = vueAdmin.demanderFloat("Durée : ");
 
-        Morceau nouveau = new Morceau(titre, duree, artiste);
+        Morceau nouveau = new Morceau(titre, duree, album, artiste);
         catalogue.ajouterMorceau(nouveau);
 
         utilitaire.GestionnaireFichiers.sauvegarderCatalogue(catalogue.getMorceaux());
@@ -167,17 +171,103 @@ public class ControleurAdmin {
     }
 
     private void afficherStats(Catalogue catalogue, ArrayList<Abonne> abonnes) {
-        int nbMorceaux = catalogue.getMorceaux().size();
         int nbUsers = abonnes.size();
+        int nbMorceaux = catalogue.getMorceaux().size();
 
-        int totalEcoutes = 0;
+        ArrayList<String> artistesUniques = new ArrayList<>();
+        ArrayList<String> albumsUniques = new ArrayList<>();
+
         for (Morceau m : catalogue.getMorceaux()) {
-            totalEcoutes += m.getNbEcoutes();
+            if (m.getArtiste() != null && !artistesUniques.contains(m.getArtiste())) {
+                artistesUniques.add(m.getArtiste());
+            }
+            if (m.getAlbum() != null && !albumsUniques.contains(m.getAlbum())) {
+                albumsUniques.add(m.getAlbum());
+            }
         }
 
-        vueAdmin.afficherMessage("\n--- STATS ---");
-        vueAdmin.afficherMessage("Utilisateurs : " + nbUsers);
-        vueAdmin.afficherMessage("Morceaux : " + nbMorceaux);
-        vueAdmin.afficherMessage("Écoutes totales : " + totalEcoutes);
+        // pour les stat evoluer pour compter
+        Map<String, Integer> ecoutesMorceaux = new HashMap<>();
+        Map<String, Integer> ecoutesArtistes = new HashMap<>();
+        Map<String, Integer> ajoutsPlaylists = new HashMap<>();
+
+        int totalEcoutes = 0;
+
+        for (Abonne a : abonnes) {
+            ArrayList<String> historiqueTitres = utilitaire.GestionnaireFichiers.chargerHistorique(a.getLogin());
+            totalEcoutes += historiqueTitres.size();
+
+            for (String titre : historiqueTitres) {
+                // compteur de morceau
+                ecoutesMorceaux.put(titre, ecoutesMorceaux.getOrDefault(titre, 0) + 1);
+
+                // On cherche le morceau dans le catalogue pour trouver son artiste
+                Morceau m = trouverMorceau(titre, catalogue);
+                if (m != null && m.getArtiste() != null) {
+                    ecoutesArtistes.put(m.getArtiste(), ecoutesArtistes.getOrDefault(m.getArtiste(), 0) + 1);
+                }
+            }
+
+            // compteur des morveau dans playlist
+            for (modele.Playlist p : a.getPlaylists()) {
+                for (Morceau m : p.getMorceaux()) {
+                    ajoutsPlaylists.put(m.getTitre(), ajoutsPlaylists.getOrDefault(m.getTitre(), 0) + 1);
+                }
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== STATISTIQUES JAVAZIC ===\n\n");
+        sb.append("Abonnés inscrits : ").append(nbUsers).append("\n");
+        sb.append("Morceaux au catalogue : ").append(nbMorceaux).append("\n");
+        sb.append("Albums enregistrés : ").append(albumsUniques.size()).append("\n");
+        sb.append("Artistes : ").append(artistesUniques.size()).append("\n");
+        sb.append("Nombre total d'écoutes : ").append(totalEcoutes).append("\n\n");
+
+        sb.append("=== STATISTIQUES ÉVOLUÉES ===\n");
+
+        sb.append("\nMorceaux les plus écoutés :\n");
+        sb.append(obtenirTop(ecoutesMorceaux, 3));
+
+        sb.append("\nArtistes les plus écoutés :\n");
+        sb.append(obtenirTop(ecoutesArtistes, 3));
+
+        sb.append("\nMorceaux les plus ajoutés en playlist :\n");
+        sb.append(obtenirTop(ajoutsPlaylists, 3));
+
+        vueAdmin.afficherContenu(sb.toString());
     }
+
+     // permet de trouver un morceau avec le titre
+    private Morceau trouverMorceau(String titre, Catalogue catalogue) {
+        for (Morceau m : catalogue.getMorceaux()) {
+            if (m.getTitre().equalsIgnoreCase(titre)) {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    // trie les Map (dictionnaire)
+    private String obtenirTop(Map<String, Integer> map, int limite) {
+        if (map.isEmpty()) {
+            return "Aucune donnée suffisante.\n";
+        }
+        // pour que la map soit une list
+        List<Map.Entry<String, Integer>> list = new ArrayList<>(map.entrySet());
+
+        // tri en fonction decroissant
+        list.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
+
+        StringBuilder sb = new StringBuilder();
+        int max = Math.min(limite, list.size());
+
+        for (int i = 0; i < max; i++) {
+            sb.append("  ").append(i + 1).append(". ")
+                    .append(list.get(i).getKey())
+                    .append(" (").append(list.get(i).getValue()).append(" fois)\n");
+        }
+        return sb.toString();
+    }
+
 }

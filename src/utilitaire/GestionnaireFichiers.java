@@ -50,7 +50,7 @@ public class GestionnaireFichiers {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_CATALOGUE))) {
             for (Morceau m : liste) {
                 // Format : titre;duree;artiste
-                writer.println(m.getTitre() + ";" + m.getDuree() + ";" + m.getArtiste());
+                writer.println(m.getTitre() + ";" + m.getDuree() + ";" + m.getAlbum() + ";" + m.getArtiste());
             }
         } catch (IOException e) {
             System.err.println("Erreur sauvegarde catalogue : " + e.getMessage());
@@ -108,9 +108,12 @@ public class GestionnaireFichiers {
             String ligne;
             while ((ligne = reader.readLine()) != null) {
                 String[] d = ligne.split(";");
-                if (d.length == 3) {
-                    // Attention au Float.parseFloat pour la durée
-                    liste.add(new Morceau(d[0], Float.parseFloat(d[1]), d[2]));
+                if (d.length == 4) {
+                    String titre = d[0];
+                    float duree = Float.parseFloat(d[1]);
+                    String album = d[2];
+                    String artiste = d[3];
+                    liste.add(new Morceau(titre, duree, album, artiste));
                 }
             }
         } catch (Exception e) {

@@ -6,16 +6,18 @@ public class Morceau {
     private String titre;
     private float duree;
     private String artiste;
+    private String album;
     private ArrayList<Album> albums;
 
 
     private int nombreEcoutes;
     private long derniereEcoute; // timestamp
 
-    public Morceau(String titre, float duree, String artiste) {
+    public Morceau(String titre, float duree, String album, String artiste) {
         this.titre = titre;
         this.duree = duree;
         this.artiste = artiste;
+        this.album = album;
         this.albums = new ArrayList<>();
         this.nombreEcoutes = 0;
         this.derniereEcoute = 0;
@@ -24,6 +26,8 @@ public class Morceau {
     public String getTitre() {
         return titre;
     }
+
+    public String getAlbum() {return album;}
 
     public float getDuree() {
         return duree;
@@ -45,12 +49,7 @@ public class Morceau {
         return derniereEcoute;
     }
 
-    // 🔗 liaison avec album
-    public void ajouterAlbum(Album album) {
-        if (!albums.contains(album)) {
-            albums.add(album);
-        }
-    }
+
 
     // 🎧 écouter un morceau
     public void ecouter() {
