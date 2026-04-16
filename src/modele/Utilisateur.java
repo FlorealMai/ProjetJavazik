@@ -9,6 +9,14 @@ public class Utilisateur {
         this.nombreEcoutes = 0;
     }
 
+    public int getNombreEcoutes() {
+        return nombreEcoutes;
+    }
+
+    public int getLimiteEcoutes() {
+        return LIMITE_ECOUTES;
+    }
+
     public boolean peutEcouter() {
         return nombreEcoutes < LIMITE_ECOUTES;
     }

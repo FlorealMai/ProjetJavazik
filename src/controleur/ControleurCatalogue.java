@@ -114,6 +114,11 @@ public class ControleurCatalogue {
 
     public boolean ecouter(Morceau m, Utilisateur u) {
         if (u.peutEcouter()) {
+            if (!(u instanceof Abonne)) {
+                int actuel = u.getNombreEcoutes() + 1;
+                int max = u.getLimiteEcoutes();
+                vueCatalog.afficherMessage("Compteur Visiteur : " + actuel + " / " + max);
+            }
             float dureeBrute = m.getDuree();
             int minutes = (int) dureeBrute;
             int secondes = Math.round((dureeBrute - minutes) * 100);
