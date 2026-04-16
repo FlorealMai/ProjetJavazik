@@ -72,24 +72,30 @@ public class ControleurAbonne {
 
         if (historiqueBrut.isEmpty()) {
             vueAbonne.afficherHistorique("Aucune écoute enregistrée.");
-            return;
+        } else {
+            java.util.Map<String, Integer> compteur = new java.util.HashMap<>();
+
+            for (String titre : historiqueBrut) {
+                compteur.put(titre, compteur.getOrDefault(titre, 0) + 1);
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for (java.util.Map.Entry<String, Integer> entree : compteur.entrySet()) {
+                sb.append("- ").append(entree.getKey())
+                        .append(" - ").append(entree.getValue())
+                        .append(" écoute(s)\n");
+            }
+
+            vueAbonne.afficherHistorique(sb.toString());
         }
 
-        java.util.Map<String, Integer> compteur = new java.util.HashMap<>();
-
-        for (String titre : historiqueBrut) {
-            // permet de compter le nb de fois ecouté
-            compteur.put(titre, compteur.getOrDefault(titre, 0) + 1);
+        if (vueAbonne instanceof vue.VueAbonne) {
+            boolean rester = true;
+            while (rester) {
+                int choix = vueAbonne.demanderChoix("\nTapez 0 pour revenir au menu précédent : ");
+                if (choix == 0) rester = false;
+            }
         }
-
-        StringBuilder sb = new StringBuilder();
-        for (java.util.Map.Entry<String, Integer> entree : compteur.entrySet()) {
-            sb.append("- ").append(entree.getKey())
-                    .append(" - ").append(entree.getValue())
-                    .append("\n");
-        }
-
-        vueAbonne.afficherHistorique(sb.toString());
     }
 
     private void afficherRecommandations(Abonne abonne) {
@@ -120,6 +126,14 @@ public class ControleurAbonne {
                     .append("\n");
         }
         vueAbonne.afficherRecommandations(sb.toString());
+
+        if (vueAbonne instanceof vue.VueAbonne) {
+            boolean rester = true;
+            while (rester) {
+                int retour = vueAbonne.demanderChoix("\nTapez 0 pour revenir au menu précédent : ");
+                if (retour == 0) rester = false;
+            }
+        }
     }
 
     private void afficherInfos(Abonne abonne) {
