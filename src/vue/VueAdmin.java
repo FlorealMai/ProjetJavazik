@@ -16,30 +16,30 @@ public class VueAdmin implements IVueAdmin{
         System.out.print("Choix : ");
 
         int choix = sc.nextInt();
-        sc.nextLine(); // vide le retour à la ligne
+        sc.nextLine();
         return choix;
     }
 
     public int menuCatalogueAdmin() {
-        System.out.println("\n--- Catalogue ---");
+        System.out.println("\n=== Catalogue ===");
         System.out.println("1. Ajouter un morceau");
         System.out.println("2. Supprimer un morceau");
         System.out.println("3. Retour");
         System.out.print("Choix : ");
 
         int choix = sc.nextInt();
-        sc.nextLine(); // vide le retour à la ligne
+        sc.nextLine();
         return choix;
     }
 
     public int menuAbonnesAdmin() {
-        System.out.println("\n--- Abonnés ---");
+        System.out.println("\n=== Abonnés ===");
         System.out.println("1. Supprimer un abonné");
         System.out.println("2. Retour");
         System.out.print("Choix : ");
 
         int choix = sc.nextInt();
-        sc.nextLine(); // vide le retour à la ligne
+        sc.nextLine();
         return choix;
     }
 
@@ -51,7 +51,7 @@ public class VueAdmin implements IVueAdmin{
     public float demanderFloat(String message) {
         System.out.print(message);
         float valeur = sc.nextFloat();
-        sc.nextLine(); // vide le retour à la ligne
+        sc.nextLine();
         return valeur;
     }
 

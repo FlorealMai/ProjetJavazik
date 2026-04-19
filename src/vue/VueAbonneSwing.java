@@ -96,11 +96,11 @@ public class VueAbonneSwing implements IVueAbonne {
 
         principal.add(panneauGauche, BorderLayout.WEST);
 
-        // --- CENTRE (Texte OU Liste) ---
+        // texte ou liste au centre
         cardLayout = new CardLayout();
         panelCentre = new JPanel(cardLayout);
 
-        // juste texte
+        // texte
         zoneContenu = new JTextArea();
         zoneContenu.setEditable(false);
         zoneContenu.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -108,14 +108,12 @@ public class VueAbonneSwing implements IVueAbonne {
         panelCentre.add(new JScrollPane(zoneContenu), "TEXTE");
 
 
-
-
         // liste des morceau
         JPanel contenuListeBlanc = new JPanel(new BorderLayout());
-        contenuListeBlanc.setBackground(Color.WHITE); // On force le fond en blanc
+        contenuListeBlanc.setBackground(Color.WHITE);
 
         labelTitreListe = new JLabel("=== TITRE ===");
-        labelTitreListe.setFont(new Font("Arial", Font.PLAIN, 16)); // PLAIN (pas de gras), comme le texte !
+        labelTitreListe.setFont(new Font("Arial", Font.PLAIN, 16));
         labelTitreListe.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
         contenuListeBlanc.add(labelTitreListe, BorderLayout.NORTH);
 
@@ -123,13 +121,12 @@ public class VueAbonneSwing implements IVueAbonne {
         listeVisuelle = new JList<>(modeleListe);
         listeVisuelle.setFont(new Font("Arial", Font.PLAIN, 16));
         listeVisuelle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listeVisuelle.setBorder(BorderFactory.createEmptyBorder(0, 15, 10, 15)); // Enlève les marges moches
+        listeVisuelle.setBorder(BorderFactory.createEmptyBorder(0, 15, 10, 15));
 
         contenuListeBlanc.add(listeVisuelle, BorderLayout.CENTER);
 
-        // On met tout notre bloc blanc dans le ScrollPane pour avoir le même cadre gris que le texte !
         JScrollPane scrollPaneListe = new JScrollPane(contenuListeBlanc);
-        scrollPaneListe.getViewport().setBackground(Color.WHITE); // Assure que tout le fond reste blanc
+        scrollPaneListe.getViewport().setBackground(Color.WHITE);
 
         panelCentre.add(scrollPaneListe, "LISTE");
 
@@ -275,7 +272,7 @@ public class VueAbonneSwing implements IVueAbonne {
             zoneContenu.setText(titre + textePropre);
         }
 
-        // On met à jour le texte tout en bas à gauche
+        // On met à jour le texte
         labelMessage.setText("Recommandations affichées");
     }
 
@@ -303,8 +300,6 @@ public class VueAbonneSwing implements IVueAbonne {
         JOptionPane.showMessageDialog(frame, erreur, "Erreur", JOptionPane.ERROR_MESSAGE);
     }
 
-    // selection des musique
-    // selection des musique
     @Override
     public Playlist selectionnerPlaylist(ArrayList<Playlist> playlists) {
         if (playlists == null || playlists.isEmpty()) {
