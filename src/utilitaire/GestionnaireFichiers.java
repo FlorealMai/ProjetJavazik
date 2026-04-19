@@ -6,6 +6,7 @@ import modele.Morceau;
 import java.io.*;
 import java.util.ArrayList;
 import modele.Playlist;
+import java.io.IOException;
 
 public class GestionnaireFichiers {
     // fichier de stockage
@@ -19,14 +20,14 @@ public class GestionnaireFichiers {
     // toute les fonction pour sauvegarder dans un fichier txt
 
 
-    public static void sauvegarderTout(ArrayList<Abonne> abonnes, ArrayList<Admin> admins, ArrayList<Morceau> catalogue) {
+    public static void sauvegarderTout(ArrayList<Abonne> abonnes, ArrayList<Admin> admins, ArrayList<Morceau> catalogue) throws IOException {
         sauvegarderAbonnes(abonnes);
         sauvegarderAdmins(admins);
         sauvegarderCatalogue(catalogue);
         sauvegarderPlaylists(abonnes);
     }
 
-    public static void sauvegarderAbonnes(ArrayList<Abonne> liste) {
+    public static void sauvegarderAbonnes(ArrayList<Abonne> liste) throws IOException {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_ABONNES))) {
             for (Abonne a : liste) {
                 writer.println(a.getLogin() + ";" + a.getMotDePasse() + ";" + a.getNom());
@@ -46,17 +47,15 @@ public class GestionnaireFichiers {
         }
     }
 
-    public static void sauvegarderCatalogue(ArrayList<Morceau> liste) {
+    public static void sauvegarderCatalogue(ArrayList<Morceau> liste) throws IOException {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_CATALOGUE))) {
             for (Morceau m : liste) {
                 writer.println(m.getTitre() + ";" + m.getDuree() + ";" + m.getAlbum() + ";" + m.getArtiste());
             }
-        } catch (IOException e) {
-            System.err.println("Erreur sauvegarde catalogue : " + e.getMessage());
         }
     }
 
-    public static void sauvegarderPlaylists(ArrayList<Abonne> abonnes) {
+    public static void sauvegarderPlaylists(ArrayList<Abonne> abonnes) throws IOException {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_PLAYLISTS))) {
             for (Abonne a : abonnes) {
                 for (Playlist p : a.getPlaylists()) {
@@ -84,7 +83,7 @@ public class GestionnaireFichiers {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_HISTORIQUE, true))) {
             writer.println(login + ";" + titreMorceau);
         } catch (IOException e) {
-            System.err.println("Erreur lors de l'enregistrement de l'historique : " + e.getMessage());
+            System.err.println("Impossible d'écrire dans l'historique : " + e.getMessage());
         }
     }
 
@@ -139,15 +138,20 @@ public class GestionnaireFichiers {
             while ((ligne = reader.readLine()) != null) {
                 String[] d = ligne.split(";");
                 if (d.length == 4) {
-                    String titre = d[0];
-                    float duree = Float.parseFloat(d[1]);
-                    String album = d[2];
-                    String artiste = d[3];
-                    liste.add(new Morceau(titre, duree, album, artiste));
+                    try {
+                        String titre = d[0];
+                        float duree = Float.parseFloat(d[1]); // Risque de NumberFormatException [cite: 416]
+                        String album = d[2];
+                        String artiste = d[3];
+                        liste.add(new Morceau(titre, duree, album, artiste));
+                    } catch (NumberFormatException e) {
+                        // pour ignorer les lignes avec des problemes
+                        System.err.println("Erreur de format numérique dans le catalogue : " + d[1]);
+                    }
                 }
             }
-        } catch (Exception e) {
-            System.err.println("Erreur chargement catalogue : " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Erreur technique de lecture du catalogue : " + e.getMessage());
         }
         return liste;
     }
@@ -178,34 +182,36 @@ public class GestionnaireFichiers {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String ligne;
-
             while ((ligne = reader.readLine()) != null) {
-                String[] d = ligne.split(";");
-                if (d.length >= 2) {
-                    String login = d[0];
-                    String nomPlaylist = d[1];
+                try {
+                    String[] d = ligne.split(";");
+                    if (d.length >= 2) {
+                        String login = d[0];
+                        String nomPlaylist = d[1];
+                        Playlist playlist = new Playlist(nomPlaylist);
 
-                    Playlist playlist = new Playlist(nomPlaylist);
-
-                    if (d.length == 3 && !d[2].isEmpty()) {
-                        String[] titres = d[2].split("\\|");
-
-                        for (String titre : titres) {
-                            Morceau morceauTrouve = trouverMorceauParTitre(titre, catalogue);
-                            if (morceauTrouve != null) {
-                                playlist.ajouterMorceau(morceauTrouve);
+                        if (d.length == 3 && !d[2].isEmpty()) {
+                            String[] titres = d[2].split("\\|");
+                            for (String titre : titres) {
+                                Morceau morceauTrouve = trouverMorceauParTitre(titre, catalogue);
+                                if (morceauTrouve != null) {
+                                    playlist.ajouterMorceau(morceauTrouve);
+                                }
                             }
                         }
-                    }
 
-                    Abonne abonneTrouve = trouverAbonneParLogin(login, abonnes);
-                    if (abonneTrouve != null) {
-                        abonneTrouve.ajouterPlaylist(playlist);
+                        Abonne abonneTrouve = trouverAbonneParLogin(login, abonnes);
+                        if (abonneTrouve != null) {
+                            abonneTrouve.ajouterPlaylist(playlist);
+                        }
                     }
+                } catch (Exception e) {
+                    // Capture toute erreur spécifique à une ligne (ex: index out of bounds) [cite: 405]
+                    System.err.println("Ligne de playlist malformée : " + ligne);
                 }
             }
         } catch (IOException e) {
-            System.err.println("Erreur chargement playlists : " + e.getMessage());
+            System.err.println("Erreur globale lors du chargement des playlists : " + e.getMessage());
         }
     }
 

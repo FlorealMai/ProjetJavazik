@@ -47,6 +47,7 @@ public class ControleurAdmin {
         boolean quitter = false;
 
         while (!quitter) {
+            try {
             int choix = vueAdmin.afficherMenuAdmin();
 
             switch (choix) {
@@ -70,6 +71,9 @@ public class ControleurAdmin {
                     vueAdmin.afficherMessage("Choix invalide.");
                     break;
             }
+            } catch (NumberFormatException e) {
+                vueAdmin.afficherMessage("Erreur : Veuillez saisir un nombre valide.");
+            }
         }
     }
 
@@ -77,6 +81,7 @@ public class ControleurAdmin {
         boolean retour = false;
 
         while (!retour) {
+            try {
             int choix = vueAdmin.menuCatalogueAdmin();
 
             switch (choix) {
@@ -96,21 +101,28 @@ public class ControleurAdmin {
                     vueAdmin.afficherMessage("Choix invalide.");
                     break;
             }
+        } catch (NumberFormatException e) {
+            vueAdmin.afficherMessage("Erreur : Veuillez saisir un nombre valide.");
         }
     }
+}
 
     private void ajouterMorceau(Catalogue catalogue) {
         String titre = vueAdmin.demanderTexte("Titre : ");
         String artiste = vueAdmin.demanderTexte("Artiste : ");
         String album = vueAdmin.demanderTexte("Album : ");
-        float duree = vueAdmin.demanderFloat("Durée : ");
+        try {
+            float duree = vueAdmin.demanderFloat("Durée : ");
+            Morceau nouveau = new Morceau(titre, duree, album, artiste);
+            catalogue.ajouterMorceau(nouveau);
 
-        Morceau nouveau = new Morceau(titre, duree, album, artiste);
-        catalogue.ajouterMorceau(nouveau);
-
-        utilitaire.GestionnaireFichiers.sauvegarderCatalogue(catalogue.getMorceaux());
-
-        vueAdmin.afficherMessage("Morceau ajouté avec succès !");
+            utilitaire.GestionnaireFichiers.sauvegarderCatalogue(catalogue.getMorceaux());
+            vueAdmin.afficherMessage("Morceau ajouté avec succès !");
+        } catch (NumberFormatException e) {
+            vueAdmin.afficherMessage("Erreur : La durée doit être un nombre.");
+        } catch (java.io.IOException e) {
+            vueAdmin.afficherMessage("Erreur technique : Impossible de mettre à jour le fichier catalogue.");
+        }
     }
 
     private void supprimerMorceau(Catalogue catalogue) {
@@ -125,11 +137,13 @@ public class ControleurAdmin {
         }
 
         if (aSuppr != null) {
-            catalogue.getMorceaux().remove(aSuppr);
-            utilitaire.GestionnaireFichiers.sauvegarderCatalogue(catalogue.getMorceaux());
-            vueAdmin.afficherMessage("Morceau supprimé avec succès");
-        } else {
-            vueAdmin.afficherMessage("Morceau introuvable.");
+            try {
+                catalogue.getMorceaux().remove(aSuppr);
+                utilitaire.GestionnaireFichiers.sauvegarderCatalogue(catalogue.getMorceaux());
+                vueAdmin.afficherMessage("Morceau supprimé avec succès");
+            } catch (java.io.IOException e) {
+                vueAdmin.afficherMessage("Erreur : Échec de la mise à jour du fichier.");
+            }
         }
     }
 

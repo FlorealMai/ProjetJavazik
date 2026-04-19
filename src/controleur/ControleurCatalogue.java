@@ -20,6 +20,7 @@ public class ControleurCatalogue {
         boolean retour = false;
 
         while (!retour) {
+            try {
             int choix = vueCatalog.afficherMenuCatalogue();
 
             switch (choix) {
@@ -82,6 +83,10 @@ public class ControleurCatalogue {
                 default:
                     menuPrincipal.afficherErreur("Choix invalide.");
             }
+            } catch (NumberFormatException e) {
+                // Gestion formelle de l'erreur de format [cite: 373, 504]
+                menuPrincipal.afficherErreur("Veuillez saisir un numéro valide.");
+            }
         }
     }
 
@@ -137,9 +142,10 @@ public class ControleurCatalogue {
                         tempsEcoule++;
                         vueCatalog.majProgression(tempsEcoule, tempsRestantEnSecondes);
                     } else {
-                        Thread.sleep(200); // En pause pour evité d'écouter le clavier tous le temps on met un delay ce qui rand la pause plus lents mais le programme moins buguer
+                        Thread.sleep(200);
                     }
-                } catch (Exception e) {
+                } catch (InterruptedException e) {
+
                     Thread.currentThread().interrupt();
                     break;
                 }

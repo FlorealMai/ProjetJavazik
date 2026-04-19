@@ -1,4 +1,3 @@
-user;zebi;Оладушки
+user;russe;Оладушки
 user;orel;Оладушки
-user;test;
 eliott;Coup de coeur;Baby Doll|Umbrella 

@@ -1,5 +1,6 @@
 package controleur;
 
+import java.io.IOException;
 import modele.Abonne;
 import modele.Catalogue;
 import modele.Morceau;
@@ -27,6 +28,7 @@ public class ControleurAbonne {
         boolean quitter = false;
 
         while (!quitter) {
+            try {
             int choix = vueAbonne.afficherMenuAbonne();
 
             switch (choix) {
@@ -64,7 +66,11 @@ public class ControleurAbonne {
                     vueAbonne.afficherErreur("Choix impossible.");
                     break;
             }
+            } catch (NumberFormatException e) {
+                vueAbonne.afficherErreur("Erreur : Veuillez saisir un nombre valide.");
+            }
         }
+
     }
 
     //affiche l'histo
@@ -93,8 +99,12 @@ public class ControleurAbonne {
         if (vueAbonne instanceof vue.VueAbonne) {
             boolean rester = true;
             while (rester) {
-                int choix = vueAbonne.demanderChoix("\nTapez 0 pour revenir au menu précédent : ");
-                if (choix == 0) rester = false;
+                try {
+                    int choix = vueAbonne.demanderChoix("\nTapez 0 pour revenir : ");
+                    if (choix == 0) rester = false;
+                } catch (NumberFormatException e) {
+                    vueAbonne.afficherErreur("Saisie invalide.");
+                }
             }
         }
     }
@@ -150,11 +160,13 @@ public class ControleurAbonne {
             return;
         }
 
-        Playlist nouvellePlaylist = new Playlist(nomPlaylist.trim());
-        abonne.ajouterPlaylist(nouvellePlaylist);
-        utilitaire.GestionnaireFichiers.sauvegarderPlaylists(listeAbonnes);
-        vueAbonne.afficherMessage("Playlist créée avec succès.");
+        try {
+            utilitaire.GestionnaireFichiers.sauvegarderPlaylists(listeAbonnes);
+            vueAbonne.afficherMessage("Sauvegarde effectuée avec succès.");
+        } catch (IOException e) {
 
+            vueAbonne.afficherErreur("Erreur technique : Impossible d'accéder au fichier de sauvegarde.");
+        }
     }
 
     private void afficherPlaylists(Abonne abonne) {
@@ -263,8 +275,12 @@ public class ControleurAbonne {
         Morceau morceauChoisi = morceauxCatalogue.get(choixMorceau - 1);
         playlistChoisie.ajouterMorceau(morceauChoisi);
 
-        utilitaire.GestionnaireFichiers.sauvegarderPlaylists(listeAbonnes);
-        vueAbonne.afficherMessage("Morceau ajouté à la playlist.");
+        try {
+            utilitaire.GestionnaireFichiers.sauvegarderPlaylists(listeAbonnes);
+            vueAbonne.afficherMessage("Sauvegarde effectuée avec succès.");
+        } catch (IOException e) {
+            vueAbonne.afficherErreur("Erreur technique : Impossible d'accéder au fichier de sauvegarde.");
+        }
 
 
     }

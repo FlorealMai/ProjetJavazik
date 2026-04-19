@@ -9,6 +9,7 @@ import vue.IVueMenuPrincipal;
 import vue.IVueCatalog;
 import vue.IVueAdmin;
 import vue.IVueAbonne;
+import java.io.IOException;
 
 import java.util.ArrayList;
 
@@ -80,10 +81,11 @@ public class ControleurMain {
     private void controleur() {
     }
 
-    public void lancer() {
+    public void lancer()  {
         boolean continuer = true;
 
         while (continuer) {
+            try {
             int choix = menuPrincipal.afficherMenuInitial();
 
             switch (choix) {
@@ -118,20 +120,29 @@ public class ControleurMain {
 
                 case 5:
                     //quitter
-                    utilitaire.GestionnaireFichiers.sauvegarderTout(
-                            listeAbonnes,
-                            listeAdmin,
-                            catalogue.getMorceaux()
-                    );
-                    continuer = false;
+                    try {
+                        utilitaire.GestionnaireFichiers.sauvegarderTout(
+                                listeAbonnes,
+                                listeAdmin,
+                                catalogue.getMorceaux()
+                        );
+                        menuPrincipal.afficherMessage("Données sauvegardées avec succès.");
+                        continuer = false;
+                    } catch (java.io.IOException e) {
+                        menuPrincipal.afficherErreur("Erreur lors de la sauvegarde finale : " + e.getMessage());
+                        continuer = false;
+                    }
                     break;
 
                 default:
-                    menuPrincipal.afficherErreur("Choix invalide");
+                    menuPrincipal.afficherErreur("Choix invalide.");
                     break;
             }
+        } catch (NumberFormatException e) {
+            menuPrincipal.afficherErreur("Erreur : Veuillez saisir un chiffre entre 1 et 5.");
         }
     }
+}
 
     private void seConnecterAbonne() {
         String[] ids = menuPrincipal.demanderIdentifiants();
@@ -160,6 +171,7 @@ public class ControleurMain {
             menuPrincipal.afficherErreur("Identifiants incorrects");
         }
     }
+
     private void creerCompte() {
         String[] ids = menuPrincipal.demanderIdentifiants();
         String nom = vueAdmin.demanderTexte("Nom complet : ");
@@ -168,10 +180,12 @@ public class ControleurMain {
             menuPrincipal.afficherErreur("Login déjà utilisé.");
         } else {
             controleUtilisateur.inscrireNouvelAbonne(ids[0], ids[1], nom, listeAbonnes);
-
-            utilitaire.GestionnaireFichiers.sauvegarderAbonnes(listeAbonnes);
-
-            menuPrincipal.afficherMessage("Compte créé et enregistré !");
+            try {
+                utilitaire.GestionnaireFichiers.sauvegarderAbonnes(listeAbonnes);
+                menuPrincipal.afficherMessage("Compte créé et enregistré !");
+            } catch (java.io.IOException e) {
+                menuPrincipal.afficherErreur("Compte créé localement mais erreur d'écriture disque : " + e.getMessage());
+            }
         }
     }
 
