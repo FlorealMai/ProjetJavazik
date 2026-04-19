@@ -18,7 +18,7 @@ public class Abonne extends Utilisateur {
         this.playlists = new ArrayList<>();
     }
 
-    // ===== GETTERS =====
+    //getter
 
     public String getLogin() {
         return login;
@@ -40,7 +40,6 @@ public class Abonne extends Utilisateur {
         return playlists;
     }
 
-    // ===== HISTORIQUE =====
 
     public void ajouterHistorique(Morceau morceau) {
         if (morceau != null) {
@@ -48,7 +47,6 @@ public class Abonne extends Utilisateur {
         }
     }
 
-    // ===== PLAYLISTS =====
 
     public void ajouterPlaylist(Playlist p) {
         if (p != null) {

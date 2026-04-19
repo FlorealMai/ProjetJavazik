@@ -8,15 +8,16 @@ import java.util.ArrayList;
 import modele.Playlist;
 
 public class GestionnaireFichiers {
-    // Noms des fichiers de stockage
+    // fichier de stockage
     private static final String FILE_ABONNES = "abonnes.txt";
     private static final String FILE_ADMINS = "admins.txt";
     private static final String FILE_CATALOGUE = "catalogue.txt";
     private static final String FILE_PLAYLISTS = "playlists.txt";
     private static final String FILE_HISTORIQUE = "historique.txt";
-    // ==========================================================
-    // MÉTHODES DE SAUVEGARDE (Écriture)
-    // ==========================================================
+
+
+    // toute les fonction pour sauvegarder dans un fichier txt
+
 
     public static void sauvegarderTout(ArrayList<Abonne> abonnes, ArrayList<Admin> admins, ArrayList<Morceau> catalogue) {
         sauvegarderAbonnes(abonnes);
@@ -28,7 +29,6 @@ public class GestionnaireFichiers {
     public static void sauvegarderAbonnes(ArrayList<Abonne> liste) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_ABONNES))) {
             for (Abonne a : liste) {
-                // Format : login;motdepasse;nom
                 writer.println(a.getLogin() + ";" + a.getMotDePasse() + ";" + a.getNom());
             }
         } catch (IOException e) {
@@ -49,7 +49,6 @@ public class GestionnaireFichiers {
     public static void sauvegarderCatalogue(ArrayList<Morceau> liste) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_CATALOGUE))) {
             for (Morceau m : liste) {
-                // Format : titre;duree;artiste
                 writer.println(m.getTitre() + ";" + m.getDuree() + ";" + m.getAlbum() + ";" + m.getArtiste());
             }
         } catch (IOException e) {
@@ -57,9 +56,40 @@ public class GestionnaireFichiers {
         }
     }
 
-    // ==========================================================
-    // MÉTHODES DE CHARGEMENT (Lecture)
-    // ==========================================================
+    public static void sauvegarderPlaylists(ArrayList<Abonne> abonnes) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_PLAYLISTS))) {
+            for (Abonne a : abonnes) {
+                for (Playlist p : a.getPlaylists()) {
+                    StringBuilder ligne = new StringBuilder();
+                    ligne.append(a.getLogin()).append(";")
+                            .append(p.getNom()).append(";");
+
+                    ArrayList<Morceau> morceaux = p.getMorceaux();
+                    for (int i = 0; i < morceaux.size(); i++) {
+                        ligne.append(morceaux.get(i).getTitre());
+                        if (i < morceaux.size() - 1) {
+                            ligne.append("|");
+                        }
+                    }
+
+                    writer.println(ligne);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Erreur sauvegarde playlists : " + e.getMessage());
+        }
+    }
+
+    public static void enregistrerEcoute(String login, String titreMorceau) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_HISTORIQUE, true))) {
+            writer.println(login + ";" + titreMorceau);
+        } catch (IOException e) {
+            System.err.println("Erreur lors de l'enregistrement de l'historique : " + e.getMessage());
+        }
+    }
+
+    // toutes les fonctions de chargement a partir d'un fichier txt
+
 
     public static ArrayList<Abonne> chargerAbonnes() {
         ArrayList<Abonne> liste = new ArrayList<>();
@@ -132,7 +162,6 @@ public class GestionnaireFichiers {
             String ligne;
             while ((ligne = br.readLine()) != null) {
                 String[] parts = ligne.split(";");
-                // Format du fichier : login;titre
                 if (parts.length >= 2 && parts[0].equalsIgnoreCase(loginUtilisateur)) {
                     titres.add(parts[1]);
                 }
@@ -143,32 +172,6 @@ public class GestionnaireFichiers {
         return titres;
     }
 
-//-----------------------------------------------
-//          SAUVEGARDE PLAY LISTS
-//-----------------------------------------------
-    public static void sauvegarderPlaylists(ArrayList<Abonne> abonnes) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_PLAYLISTS))) {
-            for (Abonne a : abonnes) {
-                for (Playlist p : a.getPlaylists()) {
-                    StringBuilder ligne = new StringBuilder();
-                    ligne.append(a.getLogin()).append(";")
-                            .append(p.getNom()).append(";");
-
-                    ArrayList<Morceau> morceaux = p.getMorceaux();
-                    for (int i = 0; i < morceaux.size(); i++) {
-                        ligne.append(morceaux.get(i).getTitre());
-                        if (i < morceaux.size() - 1) {
-                            ligne.append("|");
-                        }
-                    }
-
-                    writer.println(ligne);
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Erreur sauvegarde playlists : " + e.getMessage());
-        }
-    }
     public static void chargerPlaylists(ArrayList<Abonne> abonnes, ArrayList<Morceau> catalogue) {
         File file = new File(FILE_PLAYLISTS);
         if (!file.exists()) return;
@@ -205,6 +208,10 @@ public class GestionnaireFichiers {
             System.err.println("Erreur chargement playlists : " + e.getMessage());
         }
     }
+
+
+    // les fonction pour retrouver un truc précis dans un fichier txt
+
     private static Abonne trouverAbonneParLogin(String login, ArrayList<Abonne> abonnes) {
         for (Abonne a : abonnes) {
             if (a.getLogin().equalsIgnoreCase(login)) {
@@ -214,13 +221,6 @@ public class GestionnaireFichiers {
         return null;
     }
 
-    public static void enregistrerEcoute(String login, String titreMorceau) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_HISTORIQUE, true))) {
-            writer.println(login + ";" + titreMorceau);
-        } catch (IOException e) {
-            System.err.println("Erreur lors de l'enregistrement de l'historique : " + e.getMessage());
-        }
-    }
 
     private static Morceau trouverMorceauParTitre(String titre, ArrayList<Morceau> catalogue) {
         for (Morceau m : catalogue) {
