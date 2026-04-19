@@ -22,7 +22,7 @@ public class ControleurAbonne {
         this.controleurCatalogue = controleurCatalogue;
         this.listeAbonnes = listeAbonnes;
     }
-
+        //menu pour les abonnés
     public void menuAbonne(Abonne abonne, Catalogue catalogue) {
         boolean quitter = false;
 
@@ -61,12 +61,13 @@ public class ControleurAbonne {
                     break;
 
                 default:
-                    vueAbonne.afficherErreur("Choix invalide.");
+                    vueAbonne.afficherErreur("Choix impossible.");
                     break;
             }
         }
     }
 
+    //affiche l'histo
     private void afficherHistorique(Abonne abonne) {
         ArrayList<String> historiqueBrut = utilitaire.GestionnaireFichiers.chargerHistorique(abonne.getLogin());
 
@@ -83,7 +84,7 @@ public class ControleurAbonne {
             for (java.util.Map.Entry<String, Integer> entree : compteur.entrySet()) {
                 sb.append("- ").append(entree.getKey())
                         .append(" - ").append(entree.getValue())
-                        .append(" écoute(s)\n");
+                        .append(" écoutes\n");
             }
 
             vueAbonne.afficherHistorique(sb.toString());
@@ -98,15 +99,16 @@ public class ControleurAbonne {
         }
     }
 
+    //affiche les recomandation
     private void afficherRecommandations(Abonne abonne) {
         ArrayList<String> historiqueBrut = utilitaire.GestionnaireFichiers.chargerHistorique(abonne.getLogin());
 
         if (historiqueBrut == null || historiqueBrut.isEmpty()) {
-            vueAbonne.afficherMessage("Écoutez quelques morceaux pour recevoir des recommandations !");
+            vueAbonne.afficherMessage("Écoutez des morceaux pour avoir des recommandations");
             return;
         }
 
-        // on compte le nb d écoute
+        // on compte le nb d ecoute avec map
         java.util.Map<String, Integer> compteur = new java.util.HashMap<>();
         for (String titre : historiqueBrut) {
             compteur.put(titre, compteur.getOrDefault(titre, 0) + 1);
@@ -164,13 +166,13 @@ public class ControleurAbonne {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("--- VOS PLAYLISTS ---\n");
+        sb.append("=== VOS PLAYLISTS ===\n");
         for (int i = 0; i < playlists.size(); i++) {
             sb.append(i + 1).append(". ").append(playlists.get(i).getNom()).append("\n");
         }
         sb.append("0. Retour");
 
-        int choixP = vueAbonne.demanderChoix(sb.toString() + "\nQuelle playlist voulez-vous ouvrir ?");
+        int choixP = vueAbonne.demanderChoix(sb.toString() + "\nQuelle playlist voulez vous ouvrir ?");
 
         if (choixP > 0 && choixP <= playlists.size()) {
             Playlist pSelectionnee = playlists.get(choixP - 1);
@@ -179,7 +181,7 @@ public class ControleurAbonne {
             while (resterDansPlaylist) {
                 ArrayList<Morceau> morceaux = pSelectionnee.getMorceaux();
                 StringBuilder sbDetail = new StringBuilder();
-                sbDetail.append("\n--- CONTENU : ").append(pSelectionnee.getNom()).append(" ---\n");
+                sbDetail.append("\n=== CONTENU : ").append(pSelectionnee.getNom()).append(" ===\n");
 
                 if (morceaux.isEmpty()) {
                     sbDetail.append("(Playlist vide)\n0. Retour");
@@ -190,7 +192,7 @@ public class ControleurAbonne {
                         sbDetail.append(i + 1).append(". ").append(morceaux.get(i).getTitre())
                                 .append(" - ").append(morceaux.get(i).getArtiste()).append("\n");
                     }
-                    sbDetail.append("0. Quitter vers le menu abonnés");
+                    sbDetail.append("0. Quitter vers le menu");
 
                     int choixM = vueAbonne.demanderChoix(sbDetail.toString() + "\nChoisissez un numéro pour écouter ou 0 pour quitter :");
 
@@ -270,23 +272,21 @@ public class ControleurAbonne {
         boolean resterDansPlaylists = true;
 
         while (resterDansPlaylists) {
-            // L'utilisateur choisit visuellement une de ses playlists
             Playlist p = vueAbonne.selectionnerPlaylist(abonne.getPlaylists());
 
             if (p != null) {
                 boolean resterDansMorceaux = true;
                 while (resterDansMorceaux) {
-                    // L'utilisateur choisit visuellement un morceau dedans
                     Morceau m = vueAbonne.selectionnerMorceauDansPlaylist(p);
 
                     if (m != null) {
-                        ecouterDepuisAbonne(m, abonne); // La musique se lance !
+                        ecouterDepuisAbonne(m, abonne);
                     } else {
-                        resterDansMorceaux = false; // Il retourne en arrière (aux playlists)
+                        resterDansMorceaux = false;
                     }
                 }
             } else {
-                resterDansPlaylists = false; // L'utilisateur a cliqué sur le menu de gauche
+                resterDansPlaylists = false;
             }
         }
     }

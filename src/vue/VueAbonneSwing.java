@@ -28,7 +28,7 @@ public class VueAbonneSwing implements IVueAbonne {
     private DefaultListModel<String> modeleListe;
     private JList<String> listeVisuelle;
 
-    private JButton btnActionListe; // Bouton Ouvrir/Ecouter dynamique
+    private JButton btnActionListe;
     private JLabel labelMessage;
     private JLabel labelTitreListe;
 
