@@ -88,6 +88,7 @@ public class ControleurMain {
 
             switch (choix) {
                 case 1:
+                    //choix de se connecter
                     seConnecterAdmin();
                     if (adminConnecte != null) {
                         controleurAdmin.menuAdmin(catalogue, listeAbonnes);
@@ -96,6 +97,7 @@ public class ControleurMain {
                     break;
 
                 case 2:
+                    //choix de se connecter en tant qu'abboné
                     seConnecterAbonne();
                     if (abonneConnecte != null) {
 
@@ -105,16 +107,17 @@ public class ControleurMain {
                     break;
 
                 case 3:
+                    //option se creer un compte
                     creerCompte();
                     break;
 
                 case 4:
-
+                    //aller en tant que visiteur
                     gererCatalogue();
                     break;
 
                 case 5:
-
+                    //quitter
                     utilitaire.GestionnaireFichiers.sauvegarderTout(
                             listeAbonnes,
                             listeAdmin,
