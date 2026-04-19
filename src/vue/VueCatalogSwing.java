@@ -23,7 +23,7 @@ public class VueCatalogSwing implements IVueCatalog {
     private DefaultListModel<String> modeleListe;
     private JList<String> listeVisuelle;
 
-    // --- COMPOSANTS DU LECTEUR ---
+    //compansant
     private JPanel panneauLecture;
     private JLabel labelTitreLecture;
     private JProgressBar barreProgression;
@@ -91,7 +91,6 @@ public class VueCatalogSwing implements IVueCatalog {
         scrollPane.setBorder(BorderFactory.createTitledBorder("Morceaux"));
         principal.add(scrollPane, BorderLayout.CENTER);
 
-        // --- ZONE DU BAS (Bouton valider + Lecteur) ---
         JPanel panneauBasGlobal = new JPanel(new BorderLayout());
         panneauBasGlobal.setBackground(fond);
 
@@ -110,7 +109,6 @@ public class VueCatalogSwing implements IVueCatalog {
 
         panneauBasGlobal.add(panneauSud, BorderLayout.NORTH);
 
-        // --- LECTEUR AUDIO GRAPHIQUE ---
         panneauLecture = new JPanel(new BorderLayout(15, 0));
         panneauLecture.setBackground(new Color(50, 50, 50));
         panneauLecture.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
@@ -137,13 +135,12 @@ public class VueCatalogSwing implements IVueCatalog {
         panneauBoutonsLecture.add(btnStop);
         panneauLecture.add(panneauBoutonsLecture, BorderLayout.EAST);
 
-        panneauLecture.setVisible(false); // Caché tant qu'il n'y a pas de musique
+        panneauLecture.setVisible(false); //bouton caché tant qu'il ny a pas de musique
         panneauBasGlobal.add(panneauLecture, BorderLayout.SOUTH);
 
         principal.add(panneauBasGlobal, BorderLayout.SOUTH);
         frame.setContentPane(principal);
 
-        // --- EVENEMENTS ---
         btnRechercheMorceau.addActionListener(e -> { choix = 1; indexSelection = -1; });
         btnRechercheArtiste.addActionListener(e -> { choix = 2; indexSelection = -1; });
         btnAfficherTous.addActionListener(e -> { choix = 3; indexSelection = -1; });
@@ -215,7 +212,6 @@ public class VueCatalogSwing implements IVueCatalog {
     @Override
     public void afficherErreur(String erreur) { JOptionPane.showMessageDialog(frame, erreur, "Erreur", JOptionPane.ERROR_MESSAGE); }
 
-    // --- METHODES DU LECTEUR ---
     @Override
     public void afficherEcoute(Morceau m, int dureeTotale) {
         enPause = false;

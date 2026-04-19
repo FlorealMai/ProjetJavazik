@@ -91,7 +91,6 @@ public class VueMenuPrincipalSwing implements IVueMenuPrincipal {
 
         frame.setContentPane(panelPrincipal);
 
-        // Chaque bouton renvoie un numéro comme en console
         btnAdmin.addActionListener(e -> choix = 1);
         btnClient.addActionListener(e -> choix = 2);
         btnCreerCompte.addActionListener(e -> choix = 3);
@@ -166,17 +165,5 @@ public class VueMenuPrincipalSwing implements IVueMenuPrincipal {
                 "Erreur",
                 JOptionPane.ERROR_MESSAGE
         );
-    }
-
-    public JFrame getFrame() {
-        return frame;
-    }
-
-    public void setVisible(boolean visible) {
-        frame.setVisible(visible);
-    }
-
-    public void dispose() {
-        frame.dispose();
     }
 }

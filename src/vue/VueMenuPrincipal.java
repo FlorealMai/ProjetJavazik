@@ -9,12 +9,9 @@ public class VueMenuPrincipal implements IVueMenuPrincipal {
         this.scanner = new Scanner(System.in);
     }
 
-    /**
-     * Affiche le menu de bienvenue et récupère le choix de l'utilisateur.
-     * Correspond au lancement du programme.
-     */
+
     public int afficherMenuInitial() {
-        System.out.println("\n--- BIENVENUE SUR JAVAZIC ---");
+        System.out.println("\n===== BIENVENUE SUR JAVAZIC =====");
         System.out.println("1. Se connecter en tant qu'administrateur");
         System.out.println("2. Se connecter en tant que client");
         System.out.println("3. Créer un compte client");
@@ -29,9 +26,7 @@ public class VueMenuPrincipal implements IVueMenuPrincipal {
         return scanner.nextInt();
     }
 
-    /**
-     * Formulaire générique pour la connexion ou l'inscription.
-     */
+
     public String[] demanderIdentifiants() {
         scanner.nextLine();
         System.out.print("identifiant : ");

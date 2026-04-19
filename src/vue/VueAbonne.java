@@ -36,20 +36,20 @@ public class VueAbonne implements IVueAbonne {
 
     @Override
     public void afficherInfosAbonne(String login, String nom) {
-        System.out.println("\n--- MES INFORMATIONS ---");
+        System.out.println("\n=== MES INFORMATIONS ===");
         System.out.println("Login : " + login);
         System.out.println("Nom : " + nom);
     }
 
     @Override
     public void afficherHistorique(String historiqueTexte) {
-        System.out.println("\n--- HISTORIQUE ---");
+        System.out.println("\n=== HISTORIQUE ===");
         System.out.println(historiqueTexte);
     }
 
     @Override
     public void afficherPlaylists(String playlistsTexte) {
-        System.out.println("\n--- PLAYLISTS ---");
+        System.out.println("\n=== PLAYLISTS ===");
         System.out.println(playlistsTexte);
     }
 
@@ -86,7 +86,7 @@ public class VueAbonne implements IVueAbonne {
     @Override
     public Playlist selectionnerPlaylist(java.util.ArrayList<modele.Playlist> playlists) {
         if (playlists == null || playlists.isEmpty()) return null;
-        System.out.println("\n--- VOS PLAYLISTS ---");
+        System.out.println("\n=== VOS PLAYLISTS ===");
         for (int i = 0; i < playlists.size(); i++) {
             System.out.println((i + 1) + ". " + playlists.get(i).getNom());
         }
@@ -99,7 +99,7 @@ public class VueAbonne implements IVueAbonne {
     @Override
     public modele.Morceau selectionnerMorceauDansPlaylist(modele.Playlist playlist) {
         if (playlist.getMorceaux() == null || playlist.getMorceaux().isEmpty()) return null;
-        System.out.println("\n--- " + playlist.getNom() + " ---");
+        System.out.println("\n=== " + playlist.getNom() + " ===");
         for (int i = 0; i < playlist.getMorceaux().size(); i++) {
             System.out.println((i + 1) + ". " + playlist.getMorceaux().get(i).getTitre());
         }

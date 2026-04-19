@@ -87,7 +87,7 @@ public class VueAdminSwing implements IVueAdmin {
 
         frame.setContentPane(principal);
 
-        // Renvoie les choix pour le switch du contrôleur
+        // action des bouton qui renvois une valeur de choix pour ce deplacer dans les menu
         btnGererCatalogue.addActionListener(e -> choix = 1);
         btnGererAbonnes.addActionListener(e -> choix = 2);
         btnVoirStats.addActionListener(e -> choix = 3);
@@ -216,17 +216,5 @@ public class VueAdminSwing implements IVueAdmin {
 
     public void afficherContenu(String texte) {
         zoneContenu.setText(texte);
-    }
-
-    public JFrame getFrame() {
-        return frame;
-    }
-
-    public void setVisible(boolean visible) {
-        frame.setVisible(visible);
-    }
-
-    public void dispose() {
-        frame.dispose();
     }
 }

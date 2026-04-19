@@ -15,7 +15,6 @@ public class ControleUtilisateur {
         return false;
     }
 
-
     public void inscrireNouvelAbonne(String login, String mdp, String nom, ArrayList<Abonne> liste) {
         Abonne nouvelAbonne = new Abonne(login, mdp, nom);
         liste.add(nouvelAbonne);
