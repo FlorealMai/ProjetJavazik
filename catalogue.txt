@@ -4,4 +4,3 @@ Sigma Boy;1.45;sigma boy;besty
 Umbrella ;1.4;good girl gone bad;Rihanna
 Popopo;1.3;la vie est belle;Gambie
 test;0.05;album;Matteo
-
