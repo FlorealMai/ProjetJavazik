@@ -61,10 +61,6 @@ public class ControleurMain {
             listeAdmin = new ArrayList<>();
         }
 
-        if (catalogue.getMorceaux().isEmpty()) {
-            creerDonneesTest();
-            System.out.println("[INFO] Données de test utilisées.");
-        }
 
         utilitaire.GestionnaireFichiers.chargerPlaylists(listeAbonnes, catalogue.getMorceaux());
 
@@ -128,7 +124,7 @@ public class ControleurMain {
                     break;
 
                 default:
-                    menuPrincipal.afficherErreur("Choix invalide.");
+                    menuPrincipal.afficherErreur("Choix invalide");
                     break;
             }
         }
@@ -158,7 +154,7 @@ public class ControleurMain {
             this.abonneConnecte = null;
             menuPrincipal.afficherMessage("Bonjour admin " + resultat.getNom());
         } else {
-            menuPrincipal.afficherErreur("Identifiants incorrects.");
+            menuPrincipal.afficherErreur("Identifiants incorrects");
         }
     }
     private void creerCompte() {
@@ -183,7 +179,7 @@ public class ControleurMain {
         if (abonneConnecte != null) {
             utilisateurActuel = abonneConnecte;
         } else {
-            // creation du visiteur qui aura que 5 ecoute
+            // creation du visiteur qui a 5 ecoute
             utilisateurActuel = new Utilisateur();
         }
         controleurCatalogue.gererCatalogue(catalogue, utilisateurActuel);
@@ -194,25 +190,4 @@ public class ControleurMain {
         adminConnecte = null;
     }
 
-    private void creerDonneesTest() {
-        ajouterSiInexistant("Baby Doll", 2.15f, "Good Girl Gone Bad", "Ari Abdul");
-        ajouterSiInexistant("Sigma Boy", 1.45f, "Good Girl Gone Bad","Skibidi Toilet");
-
-        if (listeAbonnes.isEmpty()) {
-            listeAbonnes.add(new Abonne("user", "123", "Utilisateur Test"));
-        }
-
-        if (listeAdmin.isEmpty()) {
-            listeAdmin.add(new Admin("admin", "345", "Admin Test"));
-        }
-    }
-
-    private void ajouterSiInexistant(String titre, float duree, String album, String artiste) {
-        for (Morceau m : catalogue.getMorceaux()) {
-            if (m.getTitre().equalsIgnoreCase(titre)) {
-                return;
-            }
-        }
-        catalogue.ajouterMorceau(new Morceau(titre, duree, album, artiste));
-    }
 }

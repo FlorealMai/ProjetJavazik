@@ -127,7 +127,7 @@ public class ControleurAdmin {
         if (aSuppr != null) {
             catalogue.getMorceaux().remove(aSuppr);
             utilitaire.GestionnaireFichiers.sauvegarderCatalogue(catalogue.getMorceaux());
-            vueAdmin.afficherMessage("Morceau supprimé avec succès !");
+            vueAdmin.afficherMessage("Morceau supprimé avec succès");
         } else {
             vueAdmin.afficherMessage("Morceau introuvable.");
         }
@@ -153,7 +153,7 @@ public class ControleurAdmin {
 
                     if (aSuppr != null) {
                         abonnes.remove(aSuppr);
-                        vueAdmin.afficherMessage("Compte supprimé !");
+                        vueAdmin.afficherMessage("Compte supprimé");
                     } else {
                         vueAdmin.afficherMessage("Utilisateur introuvable.");
                     }
@@ -248,15 +248,15 @@ public class ControleurAdmin {
         return null;
     }
 
-    // trie les Map (dictionnaire)
+    // trie les Map
     private String obtenirTop(Map<String, Integer> map, int limite) {
         if (map.isEmpty()) {
             return "Aucune donnée suffisante.\n";
         }
-        // pour que la map soit une list
+        // pour que la map devienne une list
         List<Map.Entry<String, Integer>> list = new ArrayList<>(map.entrySet());
 
-        // tri en fonction decroissant
+        // tri decroissant
         list.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
 
         StringBuilder sb = new StringBuilder();

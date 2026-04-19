@@ -124,12 +124,12 @@ public class ControleurCatalogue {
             int secondes = Math.round((dureeBrute - minutes) * 100);
             int tempsRestantEnSecondes = (minutes * 60) + secondes;
 
-            // On demande à la vue d'afficher le lecteur (Console ou Graphique)
+            // affichagedu lecteur
             vueCatalog.afficherEcoute(m, tempsRestantEnSecondes);
 
             int tempsEcoule = 0;
 
-            // La boucle tourne tant qu'on a pas fini et que l'utilisateur n'a pas cliqué sur Arrêter
+            //boucle d'ecoute
             while (tempsEcoule < tempsRestantEnSecondes && !vueCatalog.isArrete()) {
                 try {
                     if (!vueCatalog.isEnPause()) {
@@ -137,7 +137,7 @@ public class ControleurCatalogue {
                         tempsEcoule++;
                         vueCatalog.majProgression(tempsEcoule, tempsRestantEnSecondes);
                     } else {
-                        Thread.sleep(200); // En pause, on attend juste
+                        Thread.sleep(200); // En pause pour evité d'écouter le clavier tous le temps on met un delay ce qui rand la pause plus lents mais le programme moins buguer
                     }
                 } catch (Exception e) {
                     Thread.currentThread().interrupt();
@@ -145,7 +145,6 @@ public class ControleurCatalogue {
                 }
             }
 
-            // On cache le lecteur
             vueCatalog.arreterEcoute();
 
             u.ecouter();
