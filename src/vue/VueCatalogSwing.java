@@ -39,7 +39,7 @@ public class VueCatalogSwing implements IVueCatalog {
         frame = new JFrame("JAVAZIC - Catalogue");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(1100, 700);
-        frame.setMinimumSize(new Dimension(850, 550));
+        frame.setMinimumSize(new Dimension(2240, 1400));
         frame.setLocationRelativeTo(null);
         frame.setResizable(true);
 

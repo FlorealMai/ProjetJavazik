@@ -206,7 +206,6 @@ public class GestionnaireFichiers {
                         }
                     }
                 } catch (Exception e) {
-                    // Capture toute erreur spécifique à une ligne (ex: index out of bounds) [cite: 405]
                     System.err.println("Ligne de playlist malformée : " + ligne);
                 }
             }

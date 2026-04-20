@@ -21,7 +21,7 @@ public class VueMenuPrincipalSwing implements IVueMenuPrincipal {
         frame = new JFrame("JAVAZIC - Menu principal");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 650);
-        frame.setMinimumSize(new Dimension(800, 500));
+        frame.setMinimumSize(new Dimension(2240, 1400));
         frame.setLocationRelativeTo(null);
         frame.setResizable(true);
 
